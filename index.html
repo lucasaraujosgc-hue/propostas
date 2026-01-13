@@ -27,7 +27,7 @@
         }
     </script>
 
-    <!-- Babel Standalone para transpilar TSX no navegador -->
+    <!-- Babel Standalone para transpilar o código no navegador -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
@@ -45,7 +45,6 @@
             min-height: 100vh;
         }
 
-        /* Estilo para impressão */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; }
@@ -56,9 +55,6 @@
             .text-virgula-green { color: #10b981 !important; }
             .proposal-container { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; }
         }
-
-        /* Evita flash de tela branca enquanto o Babel processa */
-        [data-babel-loading] { display: none; }
     </style>
 
     <script type="importmap">
@@ -76,19 +72,12 @@
 <body>
     <div id="root"></div>
     
-    <!-- data-presets e data-plugins são necessários para o Babel entender o TypeScript e React -->
+    <!-- Usamos .js para que o servidor aceite o arquivo, mas o Babel processa como TSX -->
     <script 
         type="text/babel" 
         data-type="module" 
         data-presets="react,typescript" 
-        src="index.tsx"
+        src="main.js"
     ></script>
-
-    <script>
-        // Remove o atributo de carregamento assim que o script terminar de carregar (opcional)
-        window.addEventListener('load', () => {
-            document.body.removeAttribute('data-babel-loading');
-        });
-    </script>
 </body>
 </html>
