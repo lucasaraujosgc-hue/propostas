@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Proposta de Contabilidade | Lucas Araújo</title>
+    <link rel="icon" type="image/png" href="https://www.virgulacontabil.com.br/wp-content/uploads/2026/01/favicon.png">
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -23,66 +26,55 @@
             }
         }
     </script>
+
+    <!-- Babel para suportar .tsx diretamente no navegador -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #0a0a0a;
             color: #ffffff;
+            margin: 0;
+            min-height: 100vh;
         }
-        .feature-list li {
-            list-style: none;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
+
+        #root {
+            min-height: 100vh;
         }
-        .detailed-list {
-            display: none;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-        .detailed-list.active {
-            display: block;
-        }
-        .detailed-list h4 {
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #a3a3a3;
-            margin: 1rem 0 0.5rem 0;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: grid;
-        }
+
         @media print {
             .no-print { display: none !important; }
-            body { background: white; color: black; }
-            .print-only { display: block !important; }
+            body { background: white !important; color: black !important; }
+            .bg-virgula-dark { background: white !important; }
             .bg-virgula-card { background: white !important; border: 1px solid #eee !important; color: black !important; }
             .text-white { color: black !important; }
             .text-virgula-muted { color: #666 !important; }
             .text-virgula-green { color: #10b981 !important; }
+            .proposal-container { border: none !important; box-shadow: none !important; padding: 0 !important; }
         }
+
+        /* Esconder o root enquanto o Babel processa para evitar flash de tela branca */
+        [[data-babel-loading]] { display: none; }
     </style>
-<script type="importmap">
+
+    <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "@google/genai": "https://esm.sh/@google/genai@^1.35.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
-    <script type="module" src="index.tsx"></script>
+    <!-- O atributo type="text/babel" e data-type="module" permite que o Babel processe o arquivo .tsx -->
+    <script type="text/babel" data-type="module" data-plugins="typescript,jsx" src="index.tsx"></script>
 </body>
 </html>
