@@ -233,6 +233,43 @@ const App = () => {
     }
   };
 
+  const addFeature = (planIdx) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[planIdx].features.push({ text: 'Novo serviço', included: true });
+      setCategories(newCats);
+    }
+  };
+
+  const removeFeature = (planIdx, featureIdx) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[planIdx].features.splice(featureIdx, 1);
+      setCategories(newCats);
+    }
+  };
+
+  const addPlan = () => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+        cat.plans.push({
+            id: Math.random().toString(36),
+            name: 'Novo Plano',
+            subtitle: 'Descrição do plano',
+            price: 100,
+            features: [
+                { text: 'Serviço Exemplo 1', included: true },
+                { text: 'Serviço Exemplo 2', included: true }
+            ],
+            detailedServices: []
+        });
+        setCategories(newCats);
+    }
+  };
+
   const renderRichText = (text) => {
     if (!text) return null;
     const parts = text.split(/(\*\*.*?\*\*)/g);
@@ -284,7 +321,7 @@ const App = () => {
 
           <div className="grid md:grid-cols-2 gap-12 mb-12">
             <div>
-              <h3 className="text-lg font-bold mb-6 border-b pb-2">Plano Escolhido: {selectedPlan.name}</h3>
+              <h3 className="text-lg font-bold mb-6 border-b pb-2">Resumo do Plano: {selectedPlan.name}</h3>
               <ul className="space-y-3">
                 {selectedPlan.features.filter(f => f.included).map((f, i) => (
                   <li key={i} className="flex items-center gap-2 text-sm">
@@ -301,6 +338,30 @@ const App = () => {
               <p className="text-xs text-gray-400 mt-2">Pagamento via boleto bancário</p>
             </div>
           </div>
+
+          {/* Renderização dos Serviços Detalhados na Proposta */}
+          {selectedPlan.detailedServices && selectedPlan.detailedServices.length > 0 && (
+            <div className="mb-12 page-break-inside-avoid">
+               <h3 className="text-lg font-bold mb-6 border-b pb-2 flex items-center gap-2">
+                 <span className="w-8 h-8 rounded-full bg-virgula-green/10 flex items-center justify-center text-virgula-green">✦</span>
+                 Escopo Detalhado dos Serviços
+               </h3>
+               <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+                 {selectedPlan.detailedServices.map((ds, idx) => (
+                   <div key={idx}>
+                     <h4 className="font-bold text-gray-900 mb-3 text-sm uppercase tracking-wide border-l-4 border-virgula-green pl-3">{ds.category}</h4>
+                     <ul className="list-none space-y-1.5">
+                       {ds.items.map((item, i) => (
+                         <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
+                           <span className="text-virgula-green/50 mt-1">•</span> {item}
+                         </li>
+                       ))}
+                     </ul>
+                   </div>
+                 ))}
+               </div>
+            </div>
+          )}
 
           <div className="mt-16 pt-8 border-t border-dashed grid md:grid-cols-2 gap-8 items-end">
             <div>
@@ -425,8 +486,9 @@ const App = () => {
                   {plan.features.map((f, i) => (
                     <li key={i} className={`text-sm ${f.included ? 'text-white' : 'text-virgula-muted line-through opacity-40'}`}>
                       {editing ? (
-                        <div className="flex gap-2">
-                          <button onClick={() => toggleFeatureInclusion(planIdx, i)} className={`w-4 h-4 rounded text-[8px] flex items-center justify-center ${f.included ? 'bg-virgula-green text-virgula-dark' : 'bg-red-500 text-white'}`}>{f.included ? '✔' : '✖'}</button>
+                        <div className="flex gap-2 items-center">
+                           <button onClick={() => removeFeature(planIdx, i)} className="text-red-500 text-xs hover:bg-white/10 p-1 rounded">🗑️</button>
+                          <button onClick={() => toggleFeatureInclusion(planIdx, i)} className={`w-4 h-4 rounded text-[8px] flex items-center justify-center shrink-0 ${f.included ? 'bg-virgula-green text-virgula-dark' : 'bg-red-500 text-white'}`}>{f.included ? '✔' : '✖'}</button>
                           <input value={f.text} onChange={e => updateFeatureText(planIdx, i, e.target.value)} className="bg-transparent border-b border-white/5 text-xs w-full outline-none" />
                         </div>
                       ) : (
@@ -434,10 +496,24 @@ const App = () => {
                       )}
                     </li>
                   ))}
+                  {editing && (
+                    <li className="pt-2">
+                        <button onClick={() => addFeature(planIdx)} className="w-full py-2 border border-dashed border-white/20 text-xs text-virgula-muted rounded hover:border-virgula-green hover:text-virgula-green transition-colors">+ Adicionar Item</button>
+                    </li>
+                  )}
                 </ul>
                 <button onClick={() => handleContract(plan)} disabled={editing} className={`w-full py-3.5 rounded-xl font-black text-sm transition-all ${editing ? 'opacity-20 cursor-not-allowed' : plan.isPopular ? 'bg-virgula-green text-virgula-dark' : 'border border-virgula-green text-virgula-green hover:bg-virgula-green hover:text-virgula-dark'}`}>GERAR PROPOSTA</button>
               </div>
             ))}
+            
+            {/* Card para adicionar novo plano */}
+            {editing && (
+                <div onClick={addPlan} className="bg-virgula-card border border-dashed border-white/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:border-virgula-green hover:bg-white/5 transition-all min-h-[500px]">
+                    <div className="w-16 h-16 rounded-full bg-virgula-green/20 flex items-center justify-center text-virgula-green text-3xl font-light mb-4">+</div>
+                    <h3 className="text-lg font-bold">Adicionar Novo Plano</h3>
+                    <p className="text-xs text-virgula-muted mt-2">Cria um novo card em branco</p>
+                </div>
+            )}
           </div>
         )}
       </main>
