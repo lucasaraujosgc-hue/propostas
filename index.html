@@ -27,7 +27,7 @@
         }
     </script>
 
-    <!-- Babel para suportar .tsx diretamente no navegador -->
+    <!-- Babel Standalone para transpilar TSX no navegador -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
@@ -45,6 +45,7 @@
             min-height: 100vh;
         }
 
+        /* Estilo para impressão */
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; }
@@ -53,11 +54,11 @@
             .text-white { color: black !important; }
             .text-virgula-muted { color: #666 !important; }
             .text-virgula-green { color: #10b981 !important; }
-            .proposal-container { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            .proposal-container { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; }
         }
 
-        /* Esconder o root enquanto o Babel processa para evitar flash de tela branca */
-        [[data-babel-loading]] { display: none; }
+        /* Evita flash de tela branca enquanto o Babel processa */
+        [data-babel-loading] { display: none; }
     </style>
 
     <script type="importmap">
@@ -74,7 +75,20 @@
 </head>
 <body>
     <div id="root"></div>
-    <!-- O atributo type="text/babel" e data-type="module" permite que o Babel processe o arquivo .tsx -->
-    <script type="text/babel" data-type="module" data-plugins="typescript,jsx" src="index.tsx"></script>
+    
+    <!-- data-presets e data-plugins são necessários para o Babel entender o TypeScript e React -->
+    <script 
+        type="text/babel" 
+        data-type="module" 
+        data-presets="react,typescript" 
+        src="index.tsx"
+    ></script>
+
+    <script>
+        // Remove o atributo de carregamento assim que o script terminar de carregar (opcional)
+        window.addEventListener('load', () => {
+            document.body.removeAttribute('data-babel-loading');
+        });
+    </script>
 </body>
 </html>
