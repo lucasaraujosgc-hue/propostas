@@ -1,13 +1,17 @@
 === CONFIGURAÇÃO EASYPANEL (NIXPACKS) ===
 
-1. No Easypanel, vá na aba "Build".
-2. Selecione "Nixpacks".
-3. Preencha os campos exatamente assim:
+1. No Easypanel, aba "Build", escolha "Nixpacks".
+2. Preencha os campos exatamente assim:
 
    - COMANDO DE INSTALAÇÃO: npm install -g serve
-   - COMANDO DE BUILD: echo "Pronto"
-   - COMANDO DE INÍCIO: serve -l 80 .
+   - COMANDO DE BUILD: echo "Build finalizado"
+   - COMANDO DE INÍCIO: serve -s . -l 80
    - PACOTES NIX: nodejs
 
-=== NOTA IMPORTANTE ===
-Renomeamos 'index.tsx' para 'main.js'. O Babel no index.html ainda vai ler o arquivo como TypeScript, mas o servidor web agora aceitará o arquivo sem erros de MIME type.
+3. Verifique se no seu repositório existem apenas estes arquivos:
+   - index.html
+   - main.js
+   - metadata.json
+
+=== IMPORTANTE ===
+O comando 'serve -s . -l 80' garante que o site seja servido como Single Page Application e na porta 80 exigida pelo Easypanel.
