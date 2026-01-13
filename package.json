@@ -1,7 +1,6 @@
 {
-  "name": "proposta-lucas-araujo",
+  "name": "proposta-app",
   "version": "1.0.0",
-  "description": "Sistema de Propostas Contábeis",
   "main": "main.js",
   "scripts": {
     "start": "serve -s . -l 80"

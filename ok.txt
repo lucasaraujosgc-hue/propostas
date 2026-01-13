@@ -1,16 +1,17 @@
-=== COMO CORRIGIR O ERRO DE BUILD NO EASYPANEL ===
+=== INSTRUÇÕES FINAIS (ZERO CONFIG) ===
 
-O erro "undefined variable npm-9_x" acontece porque você preencheu o campo "Pacotes Nix" manualmente.
+Agora que simplificamos o projeto, faça o seguinte no Easypanel:
 
-FAÇA O SEGUINTE:
+1. Vá para a aba "Build".
+2. Certifique-se que o "Build Method" é "Nixpacks".
+3. **MUITO IMPORTANTE:** Deixe o campo "PACOTES NIX" VAZIO.
+   (Apague qualquer coisa como 'nodejs', 'npm-9_x', etc).
 
-1. Vá na aba "Build" do seu serviço no Easypanel.
-2. No campo "PACOTES NIX", APAGUE TUDO (Deixe vazio).
-3. Certifique-se que os outros campos estão assim:
-   - Comando de Instalação: npm install
-   - Comando de Build: echo "Pronto"
-   - Comando de Início: npm start
+4. Preencha os comandos assim:
+   - Install Command: npm install
+   - Build Command: echo "Skip"
+   - Start Command: npm start
 
-4. Certifique-se que o arquivo "package.json" foi enviado para o seu repositório.
+5. Salve e clique em "Deploy" ou "Rebuild".
 
-O Nixpacks agora vai ler o "package.json", ver que você precisa do "serve", e vai configurar o Node.js e o NPM sozinho, sem tentar adivinhar versões que não existem.
+O sistema agora vai ler o arquivo 'package.json', ver que precisa do Node.js, instalar o servidor 'serve', e rodar o site. Todo o React será compilado direto no navegador do usuário.
