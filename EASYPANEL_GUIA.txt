@@ -1,0 +1,26 @@
+COMO IMPLANTAR NO EASYPANEL:
+
+1. REPOSITÓRIO:
+   Suba seus arquivos (index.html, index.tsx, Dockerfile, nginx.conf) para um repositório no GitHub ou GitLab.
+
+2. NO EASYPANEL:
+   - Clique em "Create New Service".
+   - Selecione "App" e depois "GitHub" (ou sua fonte).
+   - Conecte seu repositório e selecione o branch principal.
+
+3. CONFIGURAÇÃO DE BUILD:
+   - O Easypanel detectará automaticamente o seu arquivo "Dockerfile".
+   - Em "Build Method", certifique-se que está selecionado "Dockerfile".
+   - Não é necessário configurar variáveis de ambiente (API_KEY) pois removemos a IA.
+
+4. DOMÍNIO:
+   - Vá na aba "Domains" do serviço criado.
+   - Adicione seu domínio (ex: propostas.seucontabil.com.br).
+   - O Easypanel configurará o SSL (HTTPS) automaticamente.
+
+5. NOTA SOBRE TYPESCRIPT:
+   Este projeto usa index.tsx. Para que ele funcione no Nginx sem um bundler (como Vite), 
+   o navegador precisa baixar os módulos via esm.sh (já configurado no index.html). 
+   Certifique-se de que o navegador que você usa para acessar é moderno.
+
+Pronto! Seu site estará online e persistindo os dados no navegador do seu cliente.
