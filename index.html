@@ -34,7 +34,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; }
         #root:empty::before {
-            content: "Carregando sistema de propostas...";
+            content: "Iniciando sistema...";
             display: flex; justify-content: center; align-items: center;
             height: 100vh; color: #10b981; font-weight: bold; font-size: 14px;
         }
@@ -64,13 +64,6 @@
 </head>
 <body>
     <div id="root"></div>
-    
-    <script 
-        type="text/babel" 
-        data-type="module" 
-        data-presets="react,typescript" 
-        src="main.js"
-        onerror="document.getElementById('root').innerHTML = '<div style=\'color:red; padding:20px;\'>Erro ao carregar main.js. Verifique se o arquivo existe no servidor.</div>'"
-    ></script>
+    <script type="text/babel" data-type="module" data-presets="react,typescript" src="main.js"></script>
 </body>
 </html>

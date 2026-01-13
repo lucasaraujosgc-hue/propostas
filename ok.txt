@@ -1,17 +1,16 @@
-=== CONFIGURAÇÃO EASYPANEL (NIXPACKS) ===
+=== COMO CORRIGIR O ERRO DE BUILD NO EASYPANEL ===
 
-1. No Easypanel, aba "Build", escolha "Nixpacks".
-2. Preencha os campos exatamente assim:
+O erro "undefined variable npm-9_x" acontece porque você preencheu o campo "Pacotes Nix" manualmente.
 
-   - COMANDO DE INSTALAÇÃO: npm install -g serve
-   - COMANDO DE BUILD: echo "Build finalizado"
-   - COMANDO DE INÍCIO: serve -s . -l 80
-   - PACOTES NIX: nodejs
+FAÇA O SEGUINTE:
 
-3. Verifique se no seu repositório existem apenas estes arquivos:
-   - index.html
-   - main.js
-   - metadata.json
+1. Vá na aba "Build" do seu serviço no Easypanel.
+2. No campo "PACOTES NIX", APAGUE TUDO (Deixe vazio).
+3. Certifique-se que os outros campos estão assim:
+   - Comando de Instalação: npm install
+   - Comando de Build: echo "Pronto"
+   - Comando de Início: npm start
 
-=== IMPORTANTE ===
-O comando 'serve -s . -l 80' garante que o site seja servido como Single Page Application e na porta 80 exigida pelo Easypanel.
+4. Certifique-se que o arquivo "package.json" foi enviado para o seu repositório.
+
+O Nixpacks agora vai ler o "package.json", ver que você precisa do "serve", e vai configurar o Node.js e o NPM sozinho, sem tentar adivinhar versões que não existem.
