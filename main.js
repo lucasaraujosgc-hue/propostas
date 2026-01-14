@@ -17,7 +17,9 @@ const DEFAULT_DATA = [
           { text: 'Notas ilimitadas', included: true },
           { text: 'Suporte fiscal', included: true }
         ],
-        detailedServices: []
+        detailedServices: [
+          { category: 'Serviços MEI', items: ['DAS Mensal', 'DAS-SIMEI Anual', 'Emissão de Notas'] }
+        ]
       },
       {
         id: 's2',
@@ -31,115 +33,9 @@ const DEFAULT_DATA = [
           { text: 'Lucro Presumido', included: false }
         ],
         detailedServices: [
-          { category: '1. Fiscais / Tributários', items: ['Apuração mensal Simples (DAS)', 'Envio do PGDAS-D', 'Entrega da DEFIS anual', 'Classificação fiscal de receitas', 'Orientação anexos Simples', 'Monitoramento faturamento', 'Orientação Notas Fiscais', 'Retenções na fonte', 'Regularização pendências', 'Parcelamentos'] },
+          { category: '1. Fiscais / Tributários', items: ['Apuração mensal Simples (DAS)', 'PGDAS-D', 'DEFIS anual', 'Monitoramento faturamento'] },
           { category: '2. Departamento Pessoal', items: ['Encargos do pró-labore', 'Orientação trabalhista'] },
-          { category: '3. Contábeis', items: ['Escrituração contábil mensal', 'Elaboração Balanço Patrimonial', 'DRE', 'Balancetes mensais', 'Livro Diário e Razão', 'Encerramento anual', 'Atendimento fiscalizações'] }
-        ]
-      },
-      {
-        id: 's3',
-        name: 'Intermediário 2',
-        subtitle: 'Simples + 5 Func.',
-        price: 519,
-        isPopular: true,
-        features: [
-          { text: 'Tudo do Intermediário', included: true },
-          { text: 'DP p/ até 5 Funcionários', included: true },
-          { text: 'Folha, Férias e 13º', included: true },
-          { text: 'Lucro Presumido', included: false }
-        ],
-        detailedServices: [
-          { category: '1. Fiscais / Tributários', items: ['Todos itens do Intermediário'] },
-          { category: '2. Departamento Pessoal', items: ['Registro/admissão empregados', 'Elaboração folha pagamento', 'Cálculo pró-labore', 'Encargos Trabalhistas', 'Rescisões contratuais', 'Férias e 13º salário', 'Entrega eSocial, Reinf, DCTFWeb', 'Orientação trabalhista'] },
-          { category: '3. Contábeis', items: ['Todos itens do Intermediário'] }
-        ]
-      },
-      {
-        id: 's4',
-        name: 'Profissional',
-        subtitle: 'Lucro Presumido',
-        price: 649,
-        features: [
-          { text: 'Lucro Presumido', included: true },
-          { text: 'DP p/ até 5 Funcionários', included: true },
-          { text: 'Apuração ICMS e ISS', included: true },
-          { text: 'Contabilidade Completa', included: true }
-        ],
-        detailedServices: [
-          { category: '1. Fiscais / Tributários', items: ['IRPJ (trimestral)', 'CSLL (trimestral)', 'PIS/COFINS (mensal)', 'Emissão DARF', 'Controle prazos', 'Apuração ICMS/DIFAL', 'Apuração ISS', 'Retenções na fonte'] },
-          { category: '2. Departamento Pessoal', items: ['Mesmos itens Intermediário 2'] },
-          { category: '3. Contábeis', items: ['Mesmos itens Intermediário 2'] }
-        ]
-      }
-    ]
-  },
-  {
-    id: 'Comércio',
-    label: 'Comércio',
-    plans: [
-      {
-        id: 'c1',
-        name: 'Básico',
-        subtitle: 'MEI Comércio',
-        price: 100,
-        features: [
-          { text: 'Declarações MEI', included: true },
-          { text: 'Guia DAS automática', included: true },
-          { text: 'Notas ilimitadas', included: true },
-          { text: 'Suporte fiscal', included: true }
-        ],
-        detailedServices: []
-      },
-      {
-        id: 'c2',
-        name: 'Intermediário',
-        subtitle: 'Simples Nacional (Sem Func.)',
-        price: 289,
-        features: [
-          { text: 'Apuração Simples Nacional', included: true },
-          { text: 'Pró-labore Sócios', included: true },
-          { text: 'Folha Funcionários', included: false },
-          { text: 'Lucro Presumido', included: false }
-        ],
-        detailedServices: [
-          { category: '1. Fiscais / Tributários', items: ['Apuração mensal Simples (DAS)', 'Envio do PGDAS-D', 'Entrega da DEFIS anual', 'Classificação fiscal de receitas', 'Orientação anexos Simples', 'Monitoramento faturamento', 'Orientação Notas Fiscais', 'Retenções na fonte', 'Regularização pendências', 'Parcelamentos'] },
-          { category: '2. Departamento Pessoal', items: ['Encargos do pró-labore', 'Orientação trabalhista'] },
-          { category: '3. Contábeis', items: ['Escrituração contábil mensal', 'Elaboração Balanço Patrimonial', 'DRE', 'Balancetes mensais', 'Livro Diário e Razão', 'Encerramento anual', 'Atendimento fiscalizações'] }
-        ]
-      },
-      {
-        id: 'c3',
-        name: 'Intermediário 2',
-        subtitle: 'Simples + 5 Func.',
-        price: 630,
-        isPopular: true,
-        features: [
-          { text: 'Tudo do Intermediário', included: true },
-          { text: 'DP p/ até 5 Funcionários', included: true },
-          { text: 'Folha, Férias e 13º', included: true },
-          { text: 'Lucro Presumido', included: false }
-        ],
-        detailedServices: [
-          { category: '1. Fiscais / Tributários', items: ['Todos itens do Intermediário'] },
-          { category: '2. Departamento Pessoal', items: ['Registro/admissão empregados', 'Elaboração folha pagamento', 'Cálculo pró-labore', 'Encargos Trabalhistas', 'Rescisões contratuais', 'Férias e 13º salário', 'Entrega eSocial, Reinf, DCTFWeb', 'Orientação trabalhista'] },
-          { category: '3. Contábeis', items: ['Todos itens do Intermediário'] }
-        ]
-      },
-      {
-        id: 'c4',
-        name: 'Profissional',
-        subtitle: 'Lucro Presumido',
-        price: 750,
-        features: [
-          { text: 'Lucro Presumido', included: true },
-          { text: 'DP p/ até 5 Funcionários', included: true },
-          { text: 'Apuração ICMS e ISS', included: true },
-          { text: 'Contabilidade Completa', included: true }
-        ],
-        detailedServices: [
-          { category: '1. Fiscais / Tributários', items: ['IRPJ (trimestral)', 'CSLL (trimestral)', 'PIS/COFINS (mensal)', 'Emissão DARF', 'Controle prazos', 'Apuração ICMS/DIFAL', 'Apuração ISS', 'Retenções na fonte'] },
-          { category: '2. Departamento Pessoal', items: ['Mesmos itens Intermediário 2'] },
-          { category: '3. Contábeis', items: ['Mesmos itens Intermediário 2'] }
+          { category: '3. Contábeis', items: ['Escrituração mensal', 'Balanço Patrimonial', 'DRE'] }
         ]
       }
     ]
@@ -167,6 +63,7 @@ const App = () => {
   const [showProposal, setShowProposal] = useState(false);
   const [personalizedIntro, setPersonalizedIntro] = useState('');
 
+  // Salvar sempre que houver mudanças
   useEffect(() => {
     localStorage.setItem('virgula_categories', JSON.stringify(categories));
     localStorage.setItem('virgula_history', JSON.stringify(history));
@@ -176,7 +73,7 @@ const App = () => {
   }, [categories, history, accountant, crc, officeName]);
 
   const handleContract = (plan) => {
-    const defaultText = `Prezado(a) ${clientName || 'Cliente'},\n\nApresentamos nossa proposta técnica para o plano **${plan.name}**. Na **${officeName}**, focamos em **agilidade** e **segurança jurídica** para sua empresa. Estamos prontos para assumir sua gestão contábil com máxima eficiência.`;
+    const defaultText = `Prezado(a) ${clientName || 'Cliente'},\n\nApresentamos nossa proposta técnica para o plano **${plan.name}**. Na **${officeName}**, focamos em **agilidade** e **segurança jurídica**. Estamos prontos para assumir sua gestão contábil.`;
     
     const newRecord = {
       id: Math.random().toString(36).substr(2, 9),
@@ -185,23 +82,18 @@ const App = () => {
       planName: plan.name,
       categoryLabel: activeTab,
       price: plan.price,
-      planData: { ...plan }
+      planData: JSON.parse(JSON.stringify(plan)) // Deep copy
     };
     
-    setHistory([newRecord, ...history]);
+    const newHistory = [newRecord, ...history].slice(0, 50); // Limitar a 50 registros
+    setHistory(newHistory);
     setSelectedPlan(plan);
     setPersonalizedIntro(defaultText);
     setShowProposal(true);
   };
 
-  const duplicateProposal = (record) => {
-    setClientName(record.clientName + " (Cópia)");
-    setActiveTab(record.categoryLabel);
-    alert(`Dados de ${record.clientName} carregados. Altere o nome e gere a nova proposta.`);
-  };
-
   const deleteHistoryRecord = (id) => {
-    if(confirm("Deseja excluir este registro de backup?")) {
+    if(confirm("Excluir este backup permanentemente?")) {
       setHistory(history.filter(r => r.id !== id));
     }
   };
@@ -215,7 +107,8 @@ const App = () => {
     }
   };
 
-  const updateFeatureText = (planIdx, featureIdx, text) => {
+  // Funções para gerenciar FEATURES (Resumo)
+  const updateFeature = (planIdx, featureIdx, text) => {
     const newCats = [...categories];
     const cat = newCats.find(c => c.id === activeTab);
     if (cat) {
@@ -224,7 +117,7 @@ const App = () => {
     }
   };
 
-  const toggleFeatureInclusion = (planIdx, featureIdx) => {
+  const toggleFeature = (planIdx, featureIdx) => {
     const newCats = [...categories];
     const cat = newCats.find(c => c.id === activeTab);
     if (cat) {
@@ -237,16 +130,72 @@ const App = () => {
     const newCats = [...categories];
     const cat = newCats.find(c => c.id === activeTab);
     if (cat) {
-      cat.plans[planIdx].features.push({ text: 'Novo serviço', included: true });
+      cat.plans[planIdx].features.push({ text: 'Novo Item', included: true });
       setCategories(newCats);
     }
   };
 
-  const removeFeature = (planIdx, featureIdx) => {
+  const removeFeature = (planIdx, fIdx) => {
     const newCats = [...categories];
     const cat = newCats.find(c => c.id === activeTab);
     if (cat) {
-      cat.plans[planIdx].features.splice(featureIdx, 1);
+      cat.plans[planIdx].features.splice(fIdx, 1);
+      setCategories(newCats);
+    }
+  };
+
+  // Funções para gerenciar ESCOPO DETALHADO
+  const addDetailedCategory = (planIdx) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      if (!cat.plans[planIdx].detailedServices) cat.plans[planIdx].detailedServices = [];
+      cat.plans[planIdx].detailedServices.push({ category: 'Nova Categoria', items: ['Novo Serviço'] });
+      setCategories(newCats);
+    }
+  };
+
+  const updateDetailedCategoryName = (planIdx, catIdx, name) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[planIdx].detailedServices[catIdx].category = name;
+      setCategories(newCats);
+    }
+  };
+
+  const addDetailedItem = (planIdx, catIdx) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[planIdx].detailedServices[catIdx].items.push('Novo Serviço');
+      setCategories(newCats);
+    }
+  };
+
+  const updateDetailedItemValue = (planIdx, catIdx, itemIdx, val) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[planIdx].detailedServices[catIdx].items[itemIdx] = val;
+      setCategories(newCats);
+    }
+  };
+
+  const removeDetailedCategory = (pIdx, cIdx) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[pIdx].detailedServices.splice(cIdx, 1);
+      setCategories(newCats);
+    }
+  };
+
+  const removeDetailedItem = (pIdx, cIdx, iIdx) => {
+    const newCats = [...categories];
+    const cat = newCats.find(c => c.id === activeTab);
+    if (cat) {
+      cat.plans[pIdx].detailedServices[cIdx].items.splice(iIdx, 1);
       setCategories(newCats);
     }
   };
@@ -255,105 +204,95 @@ const App = () => {
     const newCats = [...categories];
     const cat = newCats.find(c => c.id === activeTab);
     if (cat) {
-        cat.plans.push({
-            id: Math.random().toString(36),
-            name: 'Novo Plano',
-            subtitle: 'Descrição do plano',
-            price: 100,
-            features: [
-                { text: 'Serviço Exemplo 1', included: true },
-                { text: 'Serviço Exemplo 2', included: true }
-            ],
-            detailedServices: []
-        });
-        setCategories(newCats);
+      cat.plans.push({
+        id: Math.random().toString(36),
+        name: 'Novo Plano',
+        subtitle: 'Subtítulo',
+        price: 0,
+        features: [],
+        detailedServices: []
+      });
+      setCategories(newCats);
+    }
+  };
+
+  const removePlan = (idx) => {
+    if (confirm("Excluir este plano permanentemente?")) {
+      const newCats = [...categories];
+      const cat = newCats.find(c => c.id === activeTab);
+      cat.plans.splice(idx, 1);
+      setCategories(newCats);
     }
   };
 
   const renderRichText = (text) => {
     if (!text) return null;
-    const parts = text.split(/(\*\*.*?\*\*)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={i} className="font-bold text-gray-900">{part.slice(2, -2)}</strong>;
-      }
-      return part;
-    });
+    return text.split(/(\*\*.*?\*\*)/g).map((part, i) => 
+      part.startsWith('**') && part.endsWith('**') ? 
+      <strong key={i} className="font-bold text-gray-900">{part.slice(2, -2)}</strong> : part
+    );
   };
 
   const currentCategory = categories.find(c => c.id === activeTab);
 
   if (showProposal && selectedPlan) {
     return (
-      <div className="min-h-screen p-4 md:p-8 flex flex-col items-center bg-gray-50">
-        <div className="max-w-4xl w-full bg-white text-gray-900 rounded-2xl overflow-hidden shadow-2xl p-8 md:p-12 border border-gray-100 proposal-container">
-          <div className="flex justify-between items-start mb-12 border-b pb-8">
+      <div className="min-h-screen p-2 md:p-6 bg-gray-100 flex flex-col items-center">
+        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-xl p-6 md:p-10 border border-gray-200 proposal-container rounded-sm">
+          {/* Cabeçalho Compacto */}
+          <div className="flex justify-between items-center mb-6 border-b pb-4">
             <div>
-              <h1 className="text-3xl font-extrabold text-virgula-green uppercase tracking-tighter">{officeName}</h1>
-              <p className="text-sm text-gray-500 font-medium">Contabilidade Inteligente & Consultiva</p>
+              <h1 className="text-2xl font-black text-virgula-green uppercase leading-none">{officeName}</h1>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Assessoria Contábil Inteligente</p>
             </div>
             <div className="text-right">
-              <p className="text-xs uppercase font-bold text-gray-400">Proposta Preparada Para</p>
-              <h2 className="text-xl font-bold">{clientName || 'Cliente Especial'}</h2>
+              <p className="text-[9px] uppercase font-bold text-gray-400">Proposta para</p>
+              <h2 className="text-lg font-bold leading-none">{clientName || 'Cliente Particular'}</h2>
             </div>
           </div>
 
-          <div className="mb-10">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <span className="w-8 h-8 rounded-full bg-virgula-green/10 flex items-center justify-center text-virgula-green">✦</span>
-              Apresentação
-            </h3>
-            <div className="group relative">
-              <div className="hidden print:block text-gray-600 leading-relaxed whitespace-pre-wrap italic">
-                {renderRichText(personalizedIntro)}
-              </div>
-              <div className="print:hidden">
-                 <p className="text-[10px] text-virgula-green font-bold uppercase mb-2 opacity-60">✎ Você pode editar o texto abaixo</p>
-                 <textarea 
-                  value={personalizedIntro}
-                  onChange={(e) => setPersonalizedIntro(e.target.value)}
-                  rows={5}
-                  className="w-full bg-gray-50 border border-gray-100 rounded-xl p-4 text-gray-600 leading-relaxed italic focus:outline-none focus:ring-2 focus:ring-virgula-green/20 focus:bg-white transition-all resize-none"
-                 />
-              </div>
+          {/* Intro Compacta */}
+          <div className="mb-6">
+            <div className="print:hidden mb-2">
+                 <p className="text-[9px] text-virgula-green font-bold uppercase opacity-60">✎ Texto da Apresentação</p>
+                 <textarea value={personalizedIntro} onChange={e => setPersonalizedIntro(e.target.value)} rows={3} className="w-full bg-gray-50 border border-gray-100 rounded p-2 text-xs italic resize-none outline-none focus:ring-1 focus:ring-virgula-green/30" />
+            </div>
+            <div className="hidden print:block text-[11px] text-gray-600 leading-snug whitespace-pre-wrap italic bg-gray-50 p-3 rounded-sm border-l-2 border-virgula-green">
+              {renderRichText(personalizedIntro)}
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
-            <div>
-              <h3 className="text-lg font-bold mb-6 border-b pb-2">Resumo do Plano: {selectedPlan.name}</h3>
-              <ul className="space-y-3">
+          {/* Resumo do Plano Amontoado */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 border-y py-4 border-gray-100">
+            <div className="md:col-span-2">
+              <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Itens Inclusos no Plano: <span className="text-gray-900">{selectedPlan.name}</span></h3>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                 {selectedPlan.features.filter(f => f.included).map((f, i) => (
-                  <li key={i} className="flex items-center gap-2 text-sm">
-                    <span className="text-virgula-green font-bold">✓</span> {f.text}
-                  </li>
+                  <div key={i} className="flex items-center gap-1.5 text-[10px] text-gray-700">
+                    <span className="text-virgula-green text-xs">✓</span> {f.text}
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="bg-gray-50 p-8 rounded-xl flex flex-col justify-center items-center text-center">
-              <p className="text-sm text-gray-500 mb-2 font-medium">Investimento Mensal</p>
-              <h4 className="text-5xl font-black text-gray-900">
-                R$ {selectedPlan.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </h4>
-              <p className="text-xs text-gray-400 mt-2">Pagamento via boleto bancário</p>
+            <div className="bg-gray-50 p-4 rounded-sm flex flex-col justify-center items-center border border-gray-100">
+              <p className="text-[9px] text-gray-400 uppercase font-black mb-1">Honorários Mensais</p>
+              <h4 className="text-2xl font-black text-gray-900 leading-none">R$ {selectedPlan.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</h4>
+              <p className="text-[8px] text-gray-400 mt-1">Valores fixos mensais</p>
             </div>
           </div>
 
-          {/* Renderização dos Serviços Detalhados na Proposta */}
-          {selectedPlan.detailedServices && selectedPlan.detailedServices.length > 0 && (
-            <div className="mb-12 page-break-inside-avoid">
-               <h3 className="text-lg font-bold mb-6 border-b pb-2 flex items-center gap-2">
-                 <span className="w-8 h-8 rounded-full bg-virgula-green/10 flex items-center justify-center text-virgula-green">✦</span>
-                 Escopo Detalhado dos Serviços
-               </h3>
-               <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+          {/* Escopo Técnico Compacto */}
+          {selectedPlan.detailedServices?.length > 0 && (
+            <div className="mb-6">
+               <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Escopo Técnico Detalhado</h3>
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                  {selectedPlan.detailedServices.map((ds, idx) => (
-                   <div key={idx}>
-                     <h4 className="font-bold text-gray-900 mb-3 text-sm uppercase tracking-wide border-l-4 border-virgula-green pl-3">{ds.category}</h4>
-                     <ul className="list-none space-y-1.5">
+                   <div key={idx} className="page-break-inside-avoid">
+                     <h4 className="text-[10px] font-bold text-gray-900 uppercase border-b border-virgula-green/30 pb-1 mb-2">{ds.category}</h4>
+                     <ul className="space-y-0.5">
                        {ds.items.map((item, i) => (
-                         <li key={i} className="text-sm text-gray-600 flex items-start gap-2">
-                           <span className="text-virgula-green/50 mt-1">•</span> {item}
+                         <li key={i} className="text-[9px] text-gray-600 flex items-start gap-1">
+                           <span className="text-virgula-green mt-0.5">•</span> {item}
                          </li>
                        ))}
                      </ul>
@@ -363,15 +302,16 @@ const App = () => {
             </div>
           )}
 
-          <div className="mt-16 pt-8 border-t border-dashed grid md:grid-cols-2 gap-8 items-end">
+          {/* Rodapé da Proposta */}
+          <div className="mt-8 pt-6 border-t border-gray-100 flex justify-between items-end">
             <div>
-              <p className="text-xs text-gray-400 mb-1">Responsável Técnico</p>
-              <p className="font-bold text-lg leading-tight">{accountant}</p>
-              <p className="text-sm text-virgula-green font-semibold">{crc}</p>
+              <p className="text-[8px] text-gray-400 uppercase font-black mb-1 tracking-widest">Responsável</p>
+              <p className="font-black text-sm text-gray-900">{accountant}</p>
+              <p className="text-[10px] text-virgula-green font-bold">{crc}</p>
             </div>
-            <div className="text-right no-print space-x-4">
-              <button onClick={() => setShowProposal(false)} className="px-6 py-2 rounded-lg border border-gray-300 text-sm font-bold hover:bg-gray-50 transition-colors">Voltar</button>
-              <button onClick={() => window.print()} className="px-6 py-2 rounded-lg bg-virgula-green text-white text-sm font-bold hover:bg-virgula-greenHover transition-colors shadow-lg shadow-virgula-green/20">Imprimir / Salvar PDF</button>
+            <div className="no-print flex gap-2">
+              <button onClick={() => setShowProposal(false)} className="px-4 py-2 bg-gray-100 text-xs font-bold rounded hover:bg-gray-200 transition-all">Voltar</button>
+              <button onClick={() => window.print()} className="px-4 py-2 bg-virgula-green text-white text-xs font-bold rounded shadow-lg shadow-virgula-green/20 hover:bg-virgula-greenHover transition-all">Exportar PDF / Imprimir</button>
             </div>
           </div>
         </div>
@@ -380,148 +320,188 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-virgula-dark text-white p-4 md:p-8">
-      <header className="max-w-7xl mx-auto mb-12 flex flex-col md:flex-row justify-between items-center gap-6">
+    <div className="min-h-screen bg-virgula-dark text-white p-4 md:p-8 font-inter">
+      <header className="max-w-7xl mx-auto mb-10 flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-virgula-green rounded-lg flex items-center justify-center font-black text-virgula-dark text-xl">V</div>
           <div>
             {editing ? (
-              <input value={officeName} onChange={e => setOfficeName(e.target.value)} className="bg-virgula-card border border-white/10 rounded px-2 py-1 text-xl font-bold block outline-none" />
+              <input value={officeName} onChange={e => setOfficeName(e.target.value)} className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xl font-black block outline-none focus:border-virgula-green" />
             ) : (
               <h1 className="text-2xl font-black tracking-tighter uppercase">{officeName}</h1>
             )}
-            <p className="text-xs text-virgula-muted font-bold tracking-widest uppercase">Assessoria Contábil</p>
+            <p className="text-[10px] text-virgula-muted font-bold tracking-[0.2em] uppercase">Gestão Contábil de Excelência</p>
           </div>
         </div>
-        <div className="flex flex-col items-center md:items-end">
+        <div className="text-center md:text-right">
           {editing ? (
-            <>
-              <input value={accountant} onChange={e => setAccountant(e.target.value)} className="bg-virgula-card border border-white/10 rounded px-2 py-1 text-sm mb-1 outline-none" />
-              <input value={crc} onChange={e => setCrc(e.target.value)} className="bg-virgula-card border border-white/10 rounded px-2 py-1 text-xs text-virgula-green outline-none" />
-            </>
+            <div className="space-y-1">
+              <input value={accountant} onChange={e => setAccountant(e.target.value)} className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs block outline-none" placeholder="Contador" />
+              <input value={crc} onChange={e => setCrc(e.target.value)} className="bg-white/5 border border-white/10 rounded px-2 py-1 text-[10px] text-virgula-green block outline-none" placeholder="Registro" />
+            </div>
           ) : (
             <>
-              <p className="text-sm font-semibold">{accountant}</p>
-              <p className="text-xs text-virgula-green font-bold">{crc}</p>
+              <p className="text-sm font-bold">{accountant}</p>
+              <p className="text-[10px] text-virgula-green font-black uppercase tracking-widest">{crc}</p>
             </>
           )}
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto">
-        <div className="bg-virgula-card border border-virgula-border rounded-2xl p-6 mb-12 flex flex-col lg:flex-row gap-8 items-center justify-between">
-          <div className="max-w-md">
-            <h2 className="text-2xl font-bold mb-2">Simulador de Orçamentos</h2>
-            <p className="text-virgula-muted text-sm">Selecione o segmento e o plano para gerar a proposta.</p>
+        {/* Painel de Controle */}
+        <div className="bg-virgula-card border border-virgula-border rounded-2xl p-6 mb-8 flex flex-col md:flex-row gap-6 items-end">
+          <div className="flex-1 w-full">
+            <label className="text-[10px] uppercase font-black text-virgula-muted mb-2 block tracking-widest opacity-50">Empresa / Cliente do Orçamento</label>
+            <input type="text" placeholder="Ex: Panificadora Central LTDA" value={clientName} onChange={e => setClientName(e.target.value)} className="w-full bg-virgula-dark border border-white/10 rounded-xl px-5 py-3.5 text-sm focus:border-virgula-green transition-all outline-none" />
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-             <div className="flex-1">
-               <label className="text-[10px] uppercase font-bold text-virgula-muted mb-1 block tracking-widest opacity-50">Nome do Prospecto</label>
-               <input type="text" placeholder="Ex: Café Bela Vista LTDA" value={clientName} onChange={e => setClientName(e.target.value)} className="w-full bg-virgula-dark border border-white/10 rounded-xl px-4 py-3 text-sm focus:border-virgula-green outline-none" />
-             </div>
-             <div className="flex items-end">
-               <button onClick={() => setEditing(!editing)} className={`px-6 py-3 rounded-xl font-bold text-sm transition-all ${editing ? 'bg-virgula-green text-virgula-dark shadow-lg' : 'bg-white/5 border border-white/10 text-white'}`}>
-                 {editing ? '💾 Salvar' : '🛠️ Editar Planos'}
-               </button>
-             </div>
-          </div>
+          <button onClick={() => setEditing(!editing)} className={`px-8 py-3.5 rounded-xl font-black text-sm transition-all whitespace-nowrap ${editing ? 'bg-virgula-green text-virgula-dark shadow-xl shadow-virgula-green/20' : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'}`}>
+            {editing ? '💾 SALVAR ALTERAÇÕES' : '⚙️ GERENCIAR PLANOS'}
+          </button>
         </div>
 
-        <div className="flex justify-center mb-8 gap-2">
+        {/* Abas e Navegação */}
+        <div className="flex flex-wrap justify-center mb-10 gap-2">
           {categories.map(cat => (
-            <button key={cat.id} onClick={() => setActiveTab(cat.id)} className={`px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === cat.id ? 'bg-virgula-green text-virgula-dark' : 'bg-virgula-card border border-white/5 text-virgula-muted'}`}>
+            <button key={cat.id} onClick={() => setActiveTab(cat.id)} className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === cat.id ? 'bg-virgula-green text-virgula-dark shadow-lg shadow-virgula-green/20' : 'bg-virgula-card border border-white/5 text-virgula-muted hover:text-white'}`}>
               {cat.label}
             </button>
           ))}
-          <button onClick={() => setActiveTab('Backup')} className={`px-8 py-3 rounded-full text-sm font-bold transition-all ${activeTab === 'Backup' ? 'bg-amber-500 text-virgula-dark' : 'bg-virgula-card border border-white/5 text-virgula-muted'}`}>
-            📂 Backup
+          <button onClick={() => setActiveTab('Backup')} className={`px-8 py-3 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'Backup' ? 'bg-amber-500 text-virgula-dark shadow-lg shadow-amber-500/20' : 'bg-virgula-card border border-white/5 text-virgula-muted hover:text-amber-500'}`}>
+            📦 HISTÓRICO / BACKUP
           </button>
         </div>
 
         {activeTab === 'Backup' ? (
-          <div className="space-y-4 max-w-5xl mx-auto">
+          <div className="max-w-4xl mx-auto space-y-4">
              {history.length === 0 ? (
-               <div className="text-center py-20 bg-virgula-card border rounded-2xl">Nenhum registro encontrado.</div>
+               <div className="text-center py-24 bg-virgula-card border border-white/5 rounded-2xl text-virgula-muted italic">Nenhum registro no histórico.</div>
              ) : (
                history.map(record => (
-                 <div key={record.id} className="bg-virgula-card border border-white/5 p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div className="flex items-center gap-4 flex-1">
-                      <div className="bg-virgula-dark p-3 rounded-xl border border-white/5">
-                         <span className="text-xs font-bold text-virgula-green block leading-tight">{record.date.split(',')[0]}</span>
+                 <div key={record.id} className="bg-virgula-card border border-white/5 p-6 rounded-2xl flex items-center justify-between group hover:border-virgula-green/30 transition-all">
+                    <div className="flex items-center gap-5">
+                      <div className="bg-virgula-dark w-12 h-12 flex flex-col items-center justify-center rounded-xl border border-white/10">
+                         <span className="text-[9px] font-black text-virgula-green uppercase tracking-tighter">{record.date.split('/')[1]}</span>
+                         <span className="text-lg font-black leading-none">{record.date.split('/')[0]}</span>
                       </div>
                       <div>
-                        <p className="font-bold text-white text-lg">{record.clientName}</p>
-                        <p className="text-xs text-virgula-muted uppercase font-bold">{record.categoryLabel} • {record.planName}</p>
+                        <p className="font-black text-lg text-white group-hover:text-virgula-green transition-colors">{record.clientName}</p>
+                        <p className="text-[10px] text-virgula-muted uppercase font-black tracking-widest mt-1">{record.categoryLabel} • {record.planName} • R$ {record.price}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <button onClick={() => duplicateProposal(record)} className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-xs font-bold hover:bg-virgula-green hover:text-virgula-dark transition-all">👯 Duplicar</button>
-                      <button onClick={() => deleteHistoryRecord(record.id)} className="p-2 rounded-lg bg-white/5 border border-white/10 text-xs hover:text-red-500">🗑️</button>
+                      <button onClick={() => { setSelectedPlan(record.planData); setClientName(record.clientName); setPersonalizedIntro(`Proposta recuperada do histórico.\n\nPrezado(a) ${record.clientName}...`); setShowProposal(true); }} className="px-4 py-2 bg-virgula-green/10 text-virgula-green text-[10px] font-black uppercase rounded-lg border border-virgula-green/20 hover:bg-virgula-green hover:text-virgula-dark transition-all">Visualizar</button>
+                      <button onClick={() => deleteHistoryRecord(record.id)} className="p-2 bg-white/5 text-virgula-muted rounded-lg hover:text-red-500 hover:bg-red-500/10 transition-all">🗑️</button>
                     </div>
                  </div>
                ))
              )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {currentCategory?.plans.map((plan, planIdx) => (
-              <div key={plan.id} className={`bg-virgula-card border rounded-2xl p-6 flex flex-col h-full relative ${plan.isPopular ? 'border-virgula-green' : 'border-virgula-border'}`}>
-                {plan.isPopular && <div className="absolute top-0 right-0 bg-virgula-green text-virgula-dark text-[10px] font-black px-4 py-1.5 rounded-bl-xl">POPULAR</div>}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {currentCategory?.plans.map((plan, pIdx) => (
+              <div key={plan.id} className="bg-virgula-card border border-virgula-border rounded-3xl p-6 flex flex-col h-full hover:scale-[1.02] transition-all">
+                {editing && <button onClick={() => removePlan(pIdx)} className="absolute -top-2 -right-2 bg-red-600 w-8 h-8 rounded-full flex items-center justify-center shadow-lg">✕</button>}
+                
                 <div className="mb-6">
                   {editing ? (
-                    <input value={plan.name} onChange={e => updatePlanField(planIdx, 'name', e.target.value)} className="bg-virgula-dark border border-white/10 rounded px-2 py-1 text-lg font-bold text-white mb-1 w-full outline-none" />
+                    <input value={plan.name} onChange={e => updatePlanField(pIdx, 'name', e.target.value)} className="bg-virgula-dark border border-white/10 rounded w-full p-2 text-lg font-black outline-none focus:border-virgula-green" />
                   ) : (
-                    <h3 className="text-xl font-extrabold text-white">{plan.name}</h3>
+                    <h3 className="text-xl font-black text-white uppercase tracking-tight">{plan.name}</h3>
                   )}
-                  <p className="text-virgula-muted text-xs font-semibold uppercase mt-1">{plan.subtitle}</p>
+                  <input value={plan.subtitle} disabled={!editing} onChange={e => updatePlanField(pIdx, 'subtitle', e.target.value)} className="bg-transparent text-[10px] text-virgula-muted font-bold uppercase tracking-widest mt-1 w-full outline-none" />
                 </div>
-                <div className="mb-8 min-h-[60px] flex flex-col justify-center">
+
+                <div className="mb-8">
                   {editing ? (
-                    <input type="number" value={plan.price} onChange={e => updatePlanField(planIdx, 'price', Number(e.target.value))} className="w-full bg-virgula-dark border border-virgula-green/30 rounded px-2 py-1 text-2xl font-black text-white outline-none" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-virgula-muted">R$</span>
+                      <input type="number" value={plan.price} onChange={e => updatePlanField(pIdx, 'price', Number(e.target.value))} className="bg-virgula-dark border border-white/10 rounded w-full p-2 text-xl font-black outline-none" />
+                    </div>
                   ) : (
-                    <div className="text-3xl font-black text-white flex items-end gap-1">R$ {plan.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span className="text-xs font-normal text-virgula-muted mb-1.5">/mês</span></div>
+                    <div className="text-3xl font-black text-white">R$ {plan.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}<span className="text-xs font-normal text-virgula-muted ml-2">/mês</span></div>
                   )}
                 </div>
-                <ul className="space-y-2 mb-6 flex-grow">
-                  {plan.features.map((f, i) => (
-                    <li key={i} className={`text-sm ${f.included ? 'text-white' : 'text-virgula-muted line-through opacity-40'}`}>
-                      {editing ? (
-                        <div className="flex gap-2 items-center">
-                           <button onClick={() => removeFeature(planIdx, i)} className="text-red-500 text-xs hover:bg-white/10 p-1 rounded">🗑️</button>
-                          <button onClick={() => toggleFeatureInclusion(planIdx, i)} className={`w-4 h-4 rounded text-[8px] flex items-center justify-center shrink-0 ${f.included ? 'bg-virgula-green text-virgula-dark' : 'bg-red-500 text-white'}`}>{f.included ? '✔' : '✖'}</button>
-                          <input value={f.text} onChange={e => updateFeatureText(planIdx, i, e.target.value)} className="bg-transparent border-b border-white/5 text-xs w-full outline-none" />
+
+                {/* Seção de Features (Resumo) */}
+                <div className="mb-6 flex-grow">
+                  <div className="flex justify-between items-center mb-3">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-virgula-muted">Resumo do Plano</p>
+                    {editing && <button onClick={() => addFeature(pIdx)} className="text-virgula-green text-[9px] font-black uppercase">+ Adicionar</button>}
+                  </div>
+                  <ul className="space-y-2">
+                    {plan.features.map((f, fIdx) => (
+                      <li key={fIdx} className={`text-xs flex items-center gap-2 ${f.included ? 'text-white' : 'text-virgula-muted line-through opacity-30'}`}>
+                        {editing ? (
+                          <div className="flex-1 flex items-center gap-2">
+                            <button onClick={() => toggleFeature(pIdx, fIdx)} className={`w-4 h-4 rounded text-[8px] flex items-center justify-center shrink-0 ${f.included ? 'bg-virgula-green text-virgula-dark' : 'bg-red-500'}`}>{f.included ? '✔' : '✕'}</button>
+                            <input value={f.text} onChange={e => updateFeature(pIdx, fIdx, e.target.value)} className="bg-transparent border-b border-white/5 w-full outline-none text-[11px]" />
+                            <button onClick={() => removeFeature(pIdx, fIdx)} className="text-red-500 text-[8px]">🗑️</button>
+                          </div>
+                        ) : (
+                          <><span className={f.included ? 'text-virgula-green' : 'text-red-500'}>{f.included ? '✔' : '✕'}</span> {f.text}</>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Seção de Escopo Detalhado (Apenas Edição) */}
+                {editing && (
+                  <div className="mt-4 pt-4 border-t border-white/5 max-h-48 overflow-y-auto custom-scrollbar">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-virgula-green">Escopo Técnico</p>
+                      <button onClick={() => addDetailedCategory(pIdx)} className="bg-white/5 p-1 rounded text-[8px]">+</button>
+                    </div>
+                    {plan.detailedServices?.map((ds, dsIdx) => (
+                      <div key={dsIdx} className="mb-4 bg-white/5 p-2 rounded">
+                        <div className="flex gap-1 mb-1">
+                          <input value={ds.category} onChange={e => updateDetailedCategoryName(pIdx, dsIdx, e.target.value)} className="bg-transparent font-bold text-[10px] w-full outline-none border-b border-white/10" />
+                          <button onClick={() => removeDetailedCategory(pIdx, dsIdx)} className="text-red-500 text-[10px]">✕</button>
                         </div>
-                      ) : (
-                        <><span className={f.included ? 'text-virgula-green' : 'text-red-500'}>{f.included ? '✔' : '✖'}</span> {f.text}</>
-                      )}
-                    </li>
-                  ))}
-                  {editing && (
-                    <li className="pt-2">
-                        <button onClick={() => addFeature(planIdx)} className="w-full py-2 border border-dashed border-white/20 text-xs text-virgula-muted rounded hover:border-virgula-green hover:text-virgula-green transition-colors">+ Adicionar Item</button>
-                    </li>
-                  )}
-                </ul>
-                <button onClick={() => handleContract(plan)} disabled={editing} className={`w-full py-3.5 rounded-xl font-black text-sm transition-all ${editing ? 'opacity-20 cursor-not-allowed' : plan.isPopular ? 'bg-virgula-green text-virgula-dark' : 'border border-virgula-green text-virgula-green hover:bg-virgula-green hover:text-virgula-dark'}`}>GERAR PROPOSTA</button>
+                        {ds.items.map((item, iIdx) => (
+                          <div key={iIdx} className="flex gap-1 mb-0.5">
+                            <input value={item} onChange={e => updateDetailedItemValue(pIdx, dsIdx, iIdx, e.target.value)} className="bg-transparent text-[9px] w-full outline-none" />
+                            <button onClick={() => removeDetailedItem(pIdx, dsIdx, iIdx)} className="text-red-400 text-[8px]">×</button>
+                          </div>
+                        ))}
+                        <button onClick={() => addDetailedItem(pIdx, dsIdx)} className="text-[8px] text-virgula-green mt-1 opacity-50">+ Item</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <button onClick={() => handleContract(plan)} disabled={editing} className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all mt-6 ${editing ? 'opacity-20' : 'bg-virgula-green text-virgula-dark shadow-lg shadow-virgula-green/20 active:scale-95 hover:bg-white hover:text-virgula-dark'}`}>GERAR PROPOSTA</button>
               </div>
             ))}
             
-            {/* Card para adicionar novo plano */}
             {editing && (
-                <div onClick={addPlan} className="bg-virgula-card border border-dashed border-white/10 rounded-2xl p-6 flex flex-col justify-center items-center text-center cursor-pointer hover:border-virgula-green hover:bg-white/5 transition-all min-h-[500px]">
-                    <div className="w-16 h-16 rounded-full bg-virgula-green/20 flex items-center justify-center text-virgula-green text-3xl font-light mb-4">+</div>
-                    <h3 className="text-lg font-bold">Adicionar Novo Plano</h3>
-                    <p className="text-xs text-virgula-muted mt-2">Cria um novo card em branco</p>
-                </div>
+              <button onClick={addPlan} className="bg-white/5 border border-dashed border-white/10 rounded-3xl p-8 flex flex-col justify-center items-center text-center hover:bg-white/10 transition-all group">
+                <div className="w-16 h-16 rounded-full bg-virgula-green/10 flex items-center justify-center text-virgula-green text-4xl mb-4 group-hover:bg-virgula-green group-hover:text-virgula-dark transition-all">+</div>
+                <p className="text-sm font-black uppercase tracking-widest">Novo Plano</p>
+              </button>
             )}
           </div>
         )}
       </main>
 
-      <footer className="max-w-7xl mx-auto mt-24 pt-12 border-t border-virgula-border flex justify-between items-center opacity-60">
-        <p className="text-sm">© {new Date().getFullYear()} {officeName}</p>
-        <p className="text-xs font-bold text-virgula-green uppercase">Tecnologia & Contabilidade</p>
+      <footer className="max-w-7xl mx-auto mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 opacity-40">
+        <p className="text-xs uppercase font-black tracking-widest">© {new Date().getFullYear()} {officeName}</p>
+        <div className="flex gap-6">
+           <span className="text-[10px] font-bold uppercase">Excelência Técnica</span>
+           <span className="text-[10px] font-bold uppercase">Segurança Jurídica</span>
+        </div>
       </footer>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 10px; }
+        @media print {
+          body { background: white !important; -webkit-print-color-adjust: exact; }
+          .page-break-inside-avoid { page-break-inside: avoid; }
+        }
+      `}</style>
     </div>
   );
 };
