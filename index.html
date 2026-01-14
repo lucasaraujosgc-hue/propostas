@@ -49,13 +49,21 @@
 
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
+            body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
             .bg-virgula-dark { background: white !important; }
             .bg-virgula-card { background: white !important; border: 1px solid #eee !important; color: black !important; }
             .text-white { color: black !important; }
             .text-virgula-muted { color: #666 !important; }
             .text-virgula-green { color: #10b981 !important; }
-            .proposal-container { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; }
+            .proposal-container { border: none !important; box-shadow: none !important; padding: 0 !important; width: 100% !important; margin: 0 !important; }
+            
+            /* Forçar Grid de 3 Colunas na Impressão */
+            .print-grid-3 {
+                display: grid !important;
+                grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+                gap: 0.5rem !important;
+            }
+            .page-break-avoid { page-break-inside: avoid !important; }
         }
     </style>
 
