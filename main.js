@@ -82,84 +82,6 @@ const DEFAULT_DATA = {
           ]
         }
       ]
-    },
-    {
-      id: 'Comércio',
-      label: 'Comércio',
-      plans: [
-        {
-          id: 'c1',
-          name: 'Básico',
-          subtitle: 'MEI Comércio',
-          price: 100,
-          isPopular: false,
-          features: [
-            { text: 'Declarações MEI', included: true },
-            { text: 'Guia DAS automática', included: true },
-            { text: 'Notas ilimitadas', included: true },
-            { text: 'Suporte fiscal', included: true }
-          ],
-          detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Guia DAS-MEI mensal', 'DASN-SIMEI anual', 'Controle de faturamento', 'Orientação emissão NF-e'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Orientação previdenciária', 'Auxílio em benefícios'] },
-            { category: 'CONTÁBEIS', items: ['Livro caixa básico', 'Relatório mensal de receitas'] }
-          ]
-        },
-        {
-          id: 'c2',
-          name: 'Intermediário',
-          subtitle: 'Simples Nacional (Sem Func.)',
-          price: 289,
-          isPopular: false,
-          features: [
-            { text: 'Apuração Simples Nacional', included: true },
-            { text: 'Pró-labore Sócios', included: true },
-            { text: 'Folha Funcionários', included: false },
-            { text: 'Lucro Presumido', included: false }
-          ],
-          detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração mensal Simples (DAS)', 'Envio do PGDAS-D', 'Entrega da DEFIS anual', 'Classificação fiscal', 'Monitoramento faturamento', 'Orientação Notas Fiscais', 'Regularização pendências', 'Parcelamentos'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Encargos pró-labore', 'Orientação trabalhista'] },
-            { category: 'CONTÁBEIS', items: ['Escrituração contábil mensal', 'Balanço Patrimonial', 'DRE', 'Balancetes mensais', 'Livro Diário e Razão', 'Encerramento anual'] }
-          ]
-        },
-        {
-          id: 'c3',
-          name: 'Intermediário 2',
-          subtitle: 'Simples + 5 Func.',
-          price: 630,
-          isPopular: true,
-          features: [
-            { text: 'Tudo do Intermediário', included: true },
-            { text: 'DP p/ até 5 Funcionários', included: true },
-            { text: 'Folha, Férias e 13º', included: true },
-            { text: 'Lucro Presumido', included: false }
-          ],
-          detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Todos itens do Intermediário', 'Apuração mensal DAS', 'PGDAS-D', 'Consultoria tributária'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Registro/admissão empregados', 'Elaboração folha pagamento', 'Cálculo pró-labore', 'Encargos Trabalhistas', 'Rescisões', 'Férias e 13º', 'eSocial, Reinf, DCTFWeb'] },
-            { category: 'CONTÁBEIS', items: ['Todos itens do Intermediário', 'Análise de indicadores'] }
-          ]
-        },
-        {
-          id: 'c4',
-          name: 'Profissional',
-          subtitle: 'Lucro Presumido',
-          price: 750,
-          isPopular: false,
-          features: [
-            { text: 'Lucro Presumido', included: true },
-            { text: 'DP p/ até 5 Funcionários', included: true },
-            { text: 'Apuração ICMS e ISS', included: true },
-            { text: 'Contabilidade Completa', included: true }
-          ],
-          detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['IRPJ (trimestral)', 'CSLL (trimestral)', 'PIS/COFINS (mensal)', 'Emissão DARF', 'Controle prazos', 'Apuração ICMS/DIFAL', 'Apuração ISS', 'Retenções na fonte'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Mesmos itens Intermediário 2', 'Gestão de benefícios', 'Auditoria trabalhista'] },
-            { category: 'CONTÁBEIS', items: ['Mesmos itens Intermediário 2', 'ECD / ECF Anual', 'Consolidação de contas'] }
-          ]
-        }
-      ]
     }
   ],
   history: [],
@@ -207,15 +129,13 @@ const App = () => {
   const updateCategoryLabel = (index, newLabel) => {
     const newData = {...data};
     newData.categories[index].label = newLabel;
-    newData.categories[index].id = newLabel; // Atualiza ID também para consistência visual
-    // Se a aba ativa for a que estamos editando, atualize o activeTab
+    newData.categories[index].id = newLabel;
     if (activeTab === data.categories[index].id) {
         setActiveTab(newLabel);
     }
     setData(newData);
   };
 
-  // Helper genérico para atualizar um plano específico
   const modifyPlan = (categoryId, planId, modifier) => {
     const newData = {...data};
     const catIndex = newData.categories.findIndex(c => c.id === categoryId);
@@ -278,7 +198,6 @@ const App = () => {
   };
 
   const handleContract = (plan) => {
-    // Usa o template salvo ou o padrão
     const template = data.introTemplate || DEFAULT_DATA.introTemplate;
     const intro = template
         .replace('{{PLANO}}', plan.name)
@@ -315,61 +234,63 @@ const App = () => {
         <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm page-break-avoid relative print:p-0 print:border-none print:shadow-none print:w-full">
           
           {/* Cabeçalho */}
-          <div className="flex justify-between items-center mb-6 border-b-2 border-virgula-green pb-2 print:mb-3 print:pb-1">
-            <div className="flex items-center gap-2">
+          <div className="flex justify-between items-center mb-8 border-b-2 border-virgula-green pb-3 print:mb-6 print:pb-2">
+            <div className="flex items-center gap-3">
               <div className="text-virgula-green">
-                <Calculator size={32} strokeWidth={2.5} className="print:w-8 print:h-8" />
+                <Calculator size={40} strokeWidth={2.5} className="print:w-10 print:h-10" />
               </div>
               <div>
-                <h1 className="text-2xl font-black tracking-tight leading-none text-gray-900 print:text-xl">
+                <h1 className="text-3xl font-black tracking-tight leading-none text-gray-900 print:text-2xl">
                   <span>Vírgula</span> <span className="text-virgula-green">CONTÁBIL</span>
                 </h1>
-                <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 print:text-[7px]">Inteligência Contábil & Estratégica</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 print:text-[9px]">Inteligência Contábil & Estratégica</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[8px] font-bold text-gray-400 uppercase print:text-[7px]">Proposta Preparada para</p>
-              <h2 className="text-sm font-bold leading-none print:text-sm">{selectedPlan.clientName || clientName || 'Cliente Particular'}</h2>
+              <p className="text-[10px] font-bold text-gray-400 uppercase print:text-[9px] print:text-gray-500">Proposta Preparada para</p>
+              <h2 className="text-lg font-bold leading-none print:text-lg print:text-black">{selectedPlan.clientName || clientName || 'Cliente Particular'}</h2>
             </div>
           </div>
 
-          {/* Intro Editável */}
-          <div className="mb-6 bg-gray-50 p-4 rounded-sm border-l-4 border-virgula-green print:mb-3 print:p-2 print:bg-white print:border-l-4 print:border-virgula-green">
-            <textarea
+          {/* Intro Editável - Com auto-ajuste de altura para impressão */}
+          <div className="mb-8 print:mb-6">
+             <div className="text-[11px] font-bold text-gray-800 italic mb-2 print:text-[10px] print:text-black">Prezado(a) {selectedPlan.clientName || 'Cliente'},</div>
+             <textarea
                 value={personalizedIntro}
                 onChange={(e) => setPersonalizedIntro(e.target.value)}
-                className="w-full bg-transparent resize-none outline-none text-[10px] text-gray-600 leading-relaxed italic h-auto overflow-hidden print:text-[9px]"
-                rows={3}
-                style={{height: 'auto', minHeight: '60px'}}
-                placeholder="Edite o texto de introdução aqui..."
+                className="w-full bg-transparent resize-none outline-none text-sm text-gray-600 leading-relaxed italic h-auto overflow-hidden print:text-sm print:text-black print:overflow-visible"
+                rows={4}
+                style={{minHeight: '80px'}}
             />
           </div>
 
-          {/* Barra Verde - Detalhes Preço */}
-          <div className="flex flex-col mb-6 print:mb-3">
-            <div className={`flex items-center bg-virgula-green text-white rounded-t-sm shadow-md overflow-hidden print:bg-virgula-green print:text-white print:shadow-none`}>
-              <div className="flex-1 px-4 py-3 border-r border-white/20 print:py-2 print:px-3 print:border-white/30">
-                <p className="text-[8px] font-black uppercase tracking-widest opacity-80 leading-none mb-1 print:text-[7px] print:text-white/90">Plano Selecionado</p>
-                <h3 className="text-lg font-black uppercase leading-none print:text-lg print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
+          {/* Barra Verde - Layout idêntico ao PDF */}
+          <div className="flex mb-8 bg-virgula-green text-white print:bg-virgula-green print:mb-6">
+              {/* Coluna 1: Nome do Plano (Larga) */}
+              <div className="flex-1 p-4 pl-5 border-r border-white/20 print:p-3 print:pl-4 print:border-white/30">
+                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[9px] print:text-white/90">Plano Selecionado</p>
+                 <h3 className="text-2xl font-black uppercase leading-tight print:text-2xl print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
               </div>
-
+              
+              {/* Coluna 2: Setup (Se existir) */}
               {displayOpening && (
-                <div className="px-5 py-3 border-r border-white/20 text-right bg-white/10 min-w-[140px] print:py-2 print:px-3 print:bg-white/10 print:min-w-[100px]">
-                  <p className="text-[7px] font-bold opacity-90 uppercase leading-none mb-1 print:text-[7px] print:text-white/90">Setup / Abertura</p>
-                  <p className="text-xl font-black leading-none print:text-lg print:text-white">
-                    {isNaN(displayOpening) ? displayOpening : `R$ ${parseFloat(displayOpening).toLocaleString('pt-BR')}`}
-                  </p>
-                </div>
+                  <div className="w-40 p-4 border-r border-white/20 text-center flex flex-col justify-center print:w-36 print:p-3 print:border-white/30">
+                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Setup / Abertura</p>
+                      <h3 className="text-xl font-black print:text-xl print:text-white">
+                        {isNaN(displayOpening) ? displayOpening : `R$ ${parseFloat(displayOpening).toLocaleString('pt-BR')}`}
+                      </h3>
+                  </div>
               )}
 
-              <div className="px-5 py-3 text-right min-w-[140px] print:py-2 print:px-3 print:min-w-[100px]">
-                <p className="text-[7px] font-bold opacity-80 uppercase leading-none mb-1 print:text-[7px] print:text-white/90">Honorários Mensais</p>
-                <p className="text-2xl font-black leading-none print:text-xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</p>
+              {/* Coluna 3: Honorários */}
+              <div className="w-48 p-4 text-center flex flex-col justify-center print:w-44 print:p-3">
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Honorários Mensais</p>
+                  <h3 className="text-3xl font-black print:text-3xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</h3>
               </div>
-            </div>
+          </div>
 
             {/* Grid de Serviços */}
-            <div className="grid grid-cols-3 gap-6 border-x border-b border-gray-100 p-5 bg-white print-grid-3 print:gap-4 print:p-3 print:border-gray-200">
+            <div className="grid grid-cols-3 gap-8 print-grid-3 print:gap-6">
               {[
                 { label: '1. FISCAIS / TRIBUTÁRIOS', key: 'FISCAIS' },
                 { label: '2. DEPARTAMENTO PESSOAL', key: 'DEPARTAMENTO' },
@@ -383,50 +304,49 @@ const App = () => {
                 
                 return (
                   <div key={column.key} className="page-break-avoid">
-                    <h4 className="text-[10px] font-black text-gray-900 border-b-2 border-virgula-green/20 mb-2 pb-1 uppercase tracking-tighter print:text-[9px] print:mb-1.5 print:pb-0.5">
+                    <h4 className="text-xs font-black text-gray-900 border-b-2 border-virgula-green/20 mb-3 pb-1 uppercase tracking-tighter print:text-xs print:text-black print:mb-2 print:border-gray-300">
                       {column.label}
                     </h4>
-                    <ul className="space-y-1 print:space-y-0.5">
+                    <ul className="space-y-1.5 print:space-y-1">
                       {items.length > 0 ? items.map((item, i) => (
-                        <li key={i} className="text-[9px] text-gray-600 leading-tight flex items-start gap-1 print:text-[8px]">
-                          <span className="text-virgula-green font-bold print:text-virgula-green">•</span> 
+                        <li key={i} className="text-[11px] text-gray-600 leading-tight flex items-start gap-1.5 print:text-[10px] print:text-gray-800">
+                          <span className="text-virgula-green font-bold text-[10px] mt-0.5 print:text-virgula-green">•</span> 
                           <span className="flex-1">{item}</span>
                         </li>
                       )) : (
-                        <li className="text-[9px] text-gray-300 italic print:text-[8px]">Itens padrão incluídos</li>
+                        <li className="text-[10px] text-gray-400 italic print:text-[9px]">Itens padrão incluídos</li>
                       )}
                     </ul>
                   </div>
                 );
               })}
             </div>
-          </div>
 
-          {/* Rodapé */}
-          <div className="grid grid-cols-2 gap-8 mb-8 border-t border-gray-100 pt-4 page-break-avoid print:mb-4 print:pt-2 print:border-gray-200">
-             <div className="text-[8px] text-gray-400 uppercase leading-relaxed italic print:text-[7px]">
+          {/* Rodapé - Espaçamento Flexível para empurrar para baixo se necessário */}
+          <div className="mt-12 pt-4 border-t border-gray-200 grid grid-cols-2 gap-8 page-break-avoid print:mt-8 print:pt-4 print:border-gray-300">
+             <div className="text-[9px] text-gray-500 uppercase leading-relaxed italic print:text-[8px] print:text-gray-600">
                 * Valores não contemplam taxas públicas, alvarás ou certificados digitais.<br/>
                 * Reajuste anual pelo IGPM/FGV acumulado dos últimos 12 meses.
              </div>
-             <div className="text-right text-[9px] text-gray-500 font-bold uppercase tracking-widest print:text-[7px]">
+             <div className="text-right text-[10px] text-gray-600 font-bold uppercase tracking-widest print:text-[9px] print:text-black">
                 Validade: 10 dias | {selectedPlan.date || new Date().toLocaleDateString()}
              </div>
           </div>
 
-          <div className="flex justify-between items-end page-break-avoid">
+          <div className="mt-6 flex justify-between items-end page-break-avoid print:mt-4">
             <div className="flex flex-col">
-              <p className="text-[6px] text-gray-400 uppercase font-black tracking-widest mb-1 print:text-[6px]">Responsável Técnico</p>
-              <div className="flex items-center gap-2">
-                 <div className="w-1.5 h-8 bg-virgula-green print:h-6 print:bg-virgula-green"></div>
+              <p className="text-[8px] text-gray-400 uppercase font-black tracking-widest mb-1 print:text-[7px] print:text-gray-500">Responsável Técnico</p>
+              <div className="flex items-center gap-3">
+                 <div className="w-1.5 h-10 bg-virgula-green print:h-8 print:bg-virgula-green"></div>
                  <div>
-                    <p className="font-black text-xs text-gray-900 leading-none uppercase print:text-[9px]">{data.accountant}</p>
-                    <p className="text-[9px] text-virgula-green font-bold tracking-tight print:text-[7px] print:text-virgula-green">{data.crc}</p>
+                    <p className="font-black text-sm text-gray-900 leading-none uppercase print:text-sm print:text-black">{data.accountant}</p>
+                    <p className="text-[10px] text-virgula-green font-bold tracking-tight print:text-[9px] print:text-virgula-green">{data.crc}</p>
                  </div>
               </div>
             </div>
             <div className="no-print flex gap-2">
-              <button onClick={() => setShowProposal(false)} className="px-4 py-2 bg-gray-100 text-[10px] font-black rounded uppercase hover:bg-gray-200 transition-colors">Voltar</button>
-              <button onClick={() => window.print()} className="px-6 py-2.5 bg-virgula-green text-white text-[10px] font-black rounded shadow-lg hover:bg-virgula-greenHover transition-all transform hover:scale-105 active:scale-95">Imprimir Proposta</button>
+              <button onClick={() => setShowProposal(false)} className="px-4 py-2 bg-gray-100 text-xs font-black rounded uppercase hover:bg-gray-200 transition-colors">Voltar</button>
+              <button onClick={() => window.print()} className="px-6 py-2.5 bg-virgula-green text-white text-xs font-black rounded shadow-lg hover:bg-virgula-greenHover transition-all transform hover:scale-105 active:scale-95">Imprimir Proposta</button>
             </div>
           </div>
         </div>
