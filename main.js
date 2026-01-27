@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Calculator } from 'lucide-react';
 
 const DEFAULT_DATA = {
   categories: [
@@ -81,7 +82,7 @@ const DEFAULT_DATA = {
   history: [],
   accountant: 'Lucas Araujo dos Santos',
   crc: 'CRC/BA - 046968-O',
-  officeName: 'Virgula Contabilidade'
+  officeName: 'Vírgula Contábil'
 };
 
 const App = () => {
@@ -149,11 +150,18 @@ const App = () => {
       <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto">
         <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm page-break-avoid relative">
           
-          {/* Header */}
+          {/* Header PROPOSTA */}
           <div className="flex justify-between items-center mb-6 border-b-2 border-virgula-green pb-2">
-            <div>
-              <h1 className="text-2xl font-black text-virgula-green uppercase leading-none">{data.officeName}</h1>
-              <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Inteligência Contábil & Estratégica</p>
+            <div className="flex items-center gap-2">
+              <div className="text-virgula-green">
+                <Calculator size={32} strokeWidth={2.5} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black tracking-tight leading-none text-gray-900">
+                  <span>Vírgula</span> <span className="text-virgula-green">CONTÁBIL</span>
+                </h1>
+                <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">Inteligência Contábil & Estratégica</p>
+              </div>
             </div>
             <div className="text-right">
               <p className="text-[8px] font-bold text-gray-400 uppercase">Proposta Preparada para</p>
@@ -263,11 +271,16 @@ const App = () => {
   return (
     <div className="min-h-screen bg-virgula-dark text-white p-4 md:p-6 font-inter">
       <header className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-virgula-green rounded-xl flex items-center justify-center font-black text-virgula-dark text-2xl shadow-lg shadow-virgula-green/30">V</div>
+        {/* Header Principal da Aplicação */}
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-virgula-card border border-white/10 rounded-2xl flex items-center justify-center shadow-lg shadow-black/50">
+             <Calculator className="text-virgula-green w-7 h-7" />
+          </div>
           <div>
-            <h1 className="text-2xl font-black uppercase tracking-tight">{data.officeName}</h1>
-            <p className="text-[10px] text-virgula-muted font-bold tracking-widest uppercase">Sistema de Propostas Profissional</p>
+            <h1 className="text-2xl font-black tracking-tight leading-none">
+                <span className="text-white">Vírgula</span> <span className="text-virgula-green">CONTÁBIL</span>
+            </h1>
+            <p className="text-[10px] text-virgula-muted font-bold tracking-widest uppercase mt-1">Sistema de Propostas</p>
           </div>
         </div>
         <button onClick={() => setEditing(!editing)} className={`px-5 py-2.5 rounded-xl font-black text-[11px] uppercase transition-all flex items-center gap-2 ${editing ? 'bg-virgula-green text-virgula-dark' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
