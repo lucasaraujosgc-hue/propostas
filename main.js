@@ -235,32 +235,31 @@ const App = () => {
     const displayOpening = selectedPlan.openingFee;
 
     return (
-      // CORREÇÃO: Adicionado print:block print:h-auto print:overflow-visible para permitir múltiplas páginas
       <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto print:block print:h-auto print:overflow-visible print:bg-white print:p-0">
         <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm relative print:p-0 print:border-none print:shadow-none print:w-full print:max-w-none">
           
           {/* Cabeçalho */}
-          <div className="flex justify-between items-center mb-8 border-b-2 border-virgula-green pb-3 page-break-avoid print:mb-6 print:pb-2">
+          <div className="flex justify-between items-center mb-8 border-b-2 border-virgula-green pb-3 page-break-avoid print:mb-6 print:pb-4">
             <div className="flex items-center gap-3">
               <div className="text-virgula-green">
-                <Calculator size={40} strokeWidth={2.5} className="print:w-10 print:h-10" />
+                <Calculator size={40} strokeWidth={2.5} className="print:w-12 print:h-12" />
               </div>
               <div>
-                <h1 className="text-3xl font-black tracking-tight leading-none text-gray-900 print:text-2xl">
+                <h1 className="text-3xl font-black tracking-tight leading-none text-gray-900 print:text-4xl">
                   <span>Vírgula</span> <span className="text-virgula-green">CONTÁBIL</span>
                 </h1>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 print:text-[9px]">Inteligência Contábil & Estratégica</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5 print:text-xs">Inteligência Contábil & Estratégica</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[10px] font-bold text-gray-400 uppercase print:text-[9px] print:text-gray-500">Proposta Preparada para</p>
-              <h2 className="text-lg font-bold leading-none print:text-lg print:text-black">{selectedPlan.clientName || clientName || 'Cliente Particular'}</h2>
+              <p className="text-[10px] font-bold text-gray-400 uppercase print:text-xs print:text-gray-500">Proposta Preparada para</p>
+              <h2 className="text-lg font-bold leading-none print:text-2xl print:text-black">{selectedPlan.clientName || clientName || 'Cliente Particular'}</h2>
             </div>
           </div>
 
           {/* Intro Editável */}
-          <div className="mb-8 print:mb-6 page-break-avoid">
-             <div className="text-[11px] font-bold text-gray-800 italic mb-2 print:text-[10px] print:text-black">Prezado(a) {selectedPlan.clientName || 'Cliente'},</div>
+          <div className="mb-8 print:mb-8 page-break-avoid">
+             <div className="text-[11px] font-bold text-gray-800 italic mb-2 print:text-sm print:text-black">Prezado(a) {selectedPlan.clientName || 'Cliente'},</div>
              
              <textarea
                 value={personalizedIntro}
@@ -270,35 +269,35 @@ const App = () => {
                 style={{minHeight: '80px'}}
             />
 
-            <div className="hidden print:block text-sm text-black leading-relaxed italic text-justify whitespace-pre-wrap">
+            <div className="hidden print:block text-base text-black leading-relaxed italic text-justify whitespace-pre-wrap">
                 {personalizedIntro}
             </div>
           </div>
 
-          {/* Barra Verde - Ajustado print:w-32 e print:w-40 para caber no A4 */}
-          <div className="flex mb-8 bg-virgula-green text-white page-break-avoid print:mb-4 print:text-sm">
-              <div className="flex-1 p-4 pl-5 border-r border-white/20 print:p-3 print:pl-4 print:border-white/30">
-                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[9px] print:text-white/90">Plano Selecionado</p>
-                 <h3 className="text-2xl font-black uppercase leading-tight print:text-lg print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
+          {/* Barra Verde - Ajustado para fontes maiores e layout idêntico à imagem */}
+          <div className="flex mb-8 bg-virgula-green text-white page-break-avoid print:mb-10 print:py-2">
+              <div className="flex-1 p-4 pl-5 border-r border-white/20 print:p-4 print:pl-6 print:border-white/30">
+                 <p className="text-[10px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-xs print:text-white/90">Plano Selecionado</p>
+                 <h3 className="text-2xl font-black uppercase leading-tight print:text-3xl print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
               </div>
               
               {displayOpening && (
-                  <div className="w-40 p-4 border-r border-white/20 text-center flex flex-col justify-center print:w-32 print:p-3 print:border-white/30">
-                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Setup / Abertura</p>
-                      <h3 className="text-xl font-black print:text-lg print:text-white">
+                  <div className="w-40 p-4 border-r border-white/20 text-center flex flex-col justify-center print:w-48 print:p-4 print:border-white/30">
+                      <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-xs print:text-white/90">Setup / Abertura</p>
+                      <h3 className="text-xl font-black print:text-2xl print:text-white">
                         {isNaN(displayOpening) ? displayOpening : `R$ ${parseFloat(displayOpening).toLocaleString('pt-BR')}`}
                       </h3>
                   </div>
               )}
 
-              <div className="w-48 p-4 text-center flex flex-col justify-center print:w-40 print:p-3">
-                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Honorários Mensais</p>
-                  <h3 className="text-3xl font-black print:text-2xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</h3>
+              <div className="w-48 p-4 text-center flex flex-col justify-center print:w-56 print:p-4">
+                  <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-xs print:text-white/90">Honorários Mensais</p>
+                  <h3 className="text-3xl font-black print:text-5xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</h3>
               </div>
           </div>
 
-            {/* Grid de Serviços */}
-            <div className="grid grid-cols-3 gap-8 print-grid-3 print:gap-6">
+            {/* Grid de Serviços - 3 Colunas na Impressão com fontes maiores */}
+            <div className="grid grid-cols-3 gap-8 print-grid-3 print:gap-8">
               {[
                 { label: '1. FISCAIS / TRIBUTÁRIOS', key: 'FISCAIS' },
                 { label: '2. DEPARTAMENTO PESSOAL', key: 'DEPARTAMENTO' },
@@ -312,17 +311,17 @@ const App = () => {
                 
                 return (
                   <div key={column.key} className="page-break-avoid">
-                    <h4 className="text-xs font-black text-gray-900 border-b-2 border-virgula-green/20 mb-3 pb-1 uppercase tracking-tighter print:text-xs print:text-black print:mb-2 print:border-gray-300">
+                    <h4 className="text-xs font-black text-gray-900 border-b-2 border-virgula-green/20 mb-3 pb-1 uppercase tracking-tighter print:text-sm print:text-black print:mb-4 print:border-gray-300">
                       {column.label}
                     </h4>
-                    <ul className="space-y-1.5 print:space-y-1">
+                    <ul className="space-y-1.5 print:space-y-2">
                       {items.length > 0 ? items.map((item, i) => (
-                        <li key={i} className="text-[11px] text-gray-600 leading-tight flex items-start gap-1.5 print:text-[10px] print:text-gray-800">
-                          <span className="text-virgula-green font-bold text-[10px] mt-0.5 print:text-virgula-green">•</span> 
+                        <li key={i} className="text-[11px] text-gray-600 leading-tight flex items-start gap-1.5 print:text-xs print:text-gray-800">
+                          <span className="text-virgula-green font-bold text-[10px] mt-0.5 print:text-virgula-green print:text-xs">•</span> 
                           <span className="flex-1">{item}</span>
                         </li>
                       )) : (
-                        <li className="text-[10px] text-gray-400 italic print:text-[9px]">Itens padrão incluídos</li>
+                        <li className="text-[10px] text-gray-400 italic print:text-xs">Itens padrão incluídos</li>
                       )}
                     </ul>
                   </div>
@@ -331,24 +330,24 @@ const App = () => {
             </div>
 
           {/* Rodapé */}
-          <div className="mt-12 pt-4 border-t border-gray-200 grid grid-cols-2 gap-8 page-break-avoid print:mt-8 print:pt-4 print:border-gray-300">
-             <div className="text-[9px] text-gray-500 uppercase leading-relaxed italic print:text-[8px] print:text-gray-600">
+          <div className="mt-12 pt-4 border-t border-gray-200 grid grid-cols-2 gap-8 page-break-avoid print:mt-12 print:pt-6 print:border-gray-300">
+             <div className="text-[9px] text-gray-500 uppercase leading-relaxed italic print:text-[10px] print:text-gray-600">
                 * Valores não contemplam taxas públicas, alvarás ou certificados digitais.<br/>
                 * Reajuste anual pelo IGPM/FGV acumulado dos últimos 12 meses.
              </div>
-             <div className="text-right text-[10px] text-gray-600 font-bold uppercase tracking-widest print:text-[9px] print:text-black">
+             <div className="text-right text-[10px] text-gray-600 font-bold uppercase tracking-widest print:text-xs print:text-black">
                 Validade: 10 dias | {selectedPlan.date || new Date().toLocaleDateString()}
              </div>
           </div>
 
-          <div className="mt-6 flex justify-between items-end page-break-avoid print:mt-4">
+          <div className="mt-6 flex justify-between items-end page-break-avoid print:mt-6">
             <div className="flex flex-col">
-              <p className="text-[8px] text-gray-400 uppercase font-black tracking-widest mb-1 print:text-[7px] print:text-gray-500">Responsável Técnico</p>
+              <p className="text-[8px] text-gray-400 uppercase font-black tracking-widest mb-1 print:text-[10px] print:text-gray-500">Responsável Técnico</p>
               <div className="flex items-center gap-3">
-                 <div className="w-1.5 h-10 bg-virgula-green print:h-8 print:bg-virgula-green"></div>
+                 <div className="w-1.5 h-10 bg-virgula-green print:h-12 print:bg-virgula-green"></div>
                  <div>
-                    <p className="font-black text-sm text-gray-900 leading-none uppercase print:text-sm print:text-black">{data.accountant}</p>
-                    <p className="text-[10px] text-virgula-green font-bold tracking-tight print:text-[9px] print:text-virgula-green">{data.crc}</p>
+                    <p className="font-black text-sm text-gray-900 leading-none uppercase print:text-lg print:text-black">{data.accountant}</p>
+                    <p className="text-[10px] text-virgula-green font-bold tracking-tight print:text-sm print:text-virgula-green">{data.crc}</p>
                  </div>
               </div>
             </div>

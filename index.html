@@ -50,7 +50,7 @@
         @media print {
             @page {
                 size: A4;
-                margin: 10mm; /* Margem reduzida para aproveitar melhor a folha */
+                margin: 10mm; /* Margem padrão para A4 */
             }
 
             .no-print { display: none !important; }
@@ -65,7 +65,7 @@
                 margin: 0 !important; 
                 -webkit-print-color-adjust: exact; 
                 print-color-adjust: exact; 
-                font-size: 10pt; /* Fonte base levemente menor para caber melhor */
+                font-size: 11pt; /* Fonte base aumentada */
             }
             
             #root { 
@@ -84,20 +84,22 @@
                 box-shadow: none !important; 
                 padding: 0 !important; 
                 width: 100% !important; 
-                max-width: none !important; /* Remove limite de largura no print */
+                max-width: none !important; 
                 margin: 0 !important; 
             }
             
             .page-break { page-break-before: always; }
             .page-break-avoid { page-break-inside: avoid !important; }
 
-            /* ESSENCIAL - Converte grid em lista vertical na impressão */
+            /* LAYOUT DE 3 COLUNAS PARA IMPRESSÃO (IGUAL IMAGEM) */
             .print-grid-3 {
-                display: block !important;
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 1.5rem !important;
             }
             .print-grid-3 > div {
-                width: 100% !important;
-                margin-bottom: 12px;
+                width: auto !important;
+                margin-bottom: 0 !important;
             }
             
             /* Ocultar scrollbars */
