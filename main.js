@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Calculator } from 'lucide-react';
+import { Calculator, Check, X, ChevronDown, ChevronUp } from 'lucide-react';
 
 const DEFAULT_DATA = {
   categories: [
@@ -10,14 +10,15 @@ const DEFAULT_DATA = {
       plans: [
         {
           id: 's1',
-          name: 'Básico (MEI)',
-          subtitle: 'Microempreendedor Individual',
+          name: 'Básico',
+          subtitle: 'Ideal para MEI',
           price: 50,
+          isPopular: false,
           features: [
-            { text: 'DAS Mensal MEI', included: true },
-            { text: 'Declaração Anual (DASN)', included: true },
-            { text: 'Emissão de Notas', included: true },
-            { text: 'Suporte via WhatsApp', included: true }
+            { text: 'Declarações MEI', included: true },
+            { text: 'Guia DAS automática', included: true },
+            { text: 'Notas ilimitadas', included: true },
+            { text: 'Suporte fiscal', included: true }
           ],
           detailedServices: [
             { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Guia DAS-MEI mensal', 'DASN-SIMEI anual', 'Controle de faturamento', 'Orientação emissão NF-e'] },
@@ -30,50 +31,131 @@ const DEFAULT_DATA = {
           name: 'Intermediário',
           subtitle: 'Simples Nacional (Sem Func.)',
           price: 250,
+          isPopular: false,
           features: [
             { text: 'Apuração Simples Nacional', included: true },
             { text: 'Pró-labore Sócios', included: true },
-            { text: 'Contabilidade Completa', included: true },
-            { text: 'Planejamento Tributário', included: true }
+            { text: 'Folha Funcionários', included: false },
+            { text: 'Lucro Presumido', included: false }
           ],
           detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração mensal DAS', 'PGDAS-D', 'DEFIS anual', 'Monitoramento faturamento', 'Orientação NF-e', 'Conciliação de Impostos'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Encargos pró-labore', 'Orientação trabalhista', 'eSocial sócios'] },
-            { category: 'CONTÁBEIS', items: ['Escrituração mensal', 'Balanço Patrimonial', 'DRE anual', 'Balancetes', 'Notas explicativas'] }
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração mensal Simples (DAS)', 'Envio do PGDAS-D', 'Entrega da DEFIS anual', 'Classificação fiscal', 'Monitoramento faturamento', 'Orientação Notas Fiscais', 'Regularização pendências', 'Parcelamentos'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Encargos pró-labore', 'Orientação trabalhista'] },
+            { category: 'CONTÁBEIS', items: ['Escrituração contábil mensal', 'Balanço Patrimonial', 'DRE', 'Balancetes mensais', 'Livro Diário e Razão', 'Encerramento anual'] }
           ]
         },
         {
           id: 's3',
           name: 'Intermediário 2',
-          subtitle: 'Simples Nacional (C/ Func.)',
-          price: 450,
+          subtitle: 'Simples + 5 Func.',
+          price: 519,
+          isPopular: true,
           features: [
-            { text: 'Folha de Pagamento', included: true },
-            { text: 'Gestão de Funcionários', included: true },
-            { text: 'eSocial Completo', included: true },
-            { text: 'Suporte Prioritário', included: true }
+            { text: 'Tudo do Intermediário', included: true },
+            { text: 'DP p/ até 5 Funcionários', included: true },
+            { text: 'Folha, Férias e 13º', included: true },
+            { text: 'Lucro Presumido', included: false }
           ],
           detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração mensal DAS', 'PGDAS-D', 'DEFIS anual', 'Consultoria tributária', 'Orientação NF-e'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Folha de pagamento mensal', 'Gestão de férias e 13º', 'eSocial / DCTFWeb', 'Admissões e Demissões', 'CAGED/RAIS'] },
-            { category: 'CONTÁBEIS', items: ['Escrituração digital', 'Balanço Patrimonial', 'DRE mensal', 'Balancetes trimestrais', 'Análise de indicadores'] }
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Todos itens do Intermediário', 'Apuração mensal DAS', 'PGDAS-D', 'Consultoria tributária'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Registro/admissão empregados', 'Elaboração folha pagamento', 'Cálculo pró-labore', 'Encargos Trabalhistas', 'Rescisões', 'Férias e 13º', 'eSocial, Reinf, DCTFWeb'] },
+            { category: 'CONTÁBEIS', items: ['Todos itens do Intermediário', 'Análise de indicadores'] }
           ]
         },
         {
           id: 's4',
-          name: 'Premium',
-          subtitle: 'Lucro Presumido / Completo',
-          price: 850,
+          name: 'Profissional',
+          subtitle: 'Lucro Presumido',
+          price: 649,
+          isPopular: false,
           features: [
             { text: 'Lucro Presumido', included: true },
-            { text: 'SPED Fiscal/Contrib.', included: true },
-            { text: 'Gestão de Estoque', included: true },
-            { text: 'Reunião Mensal VIP', included: true }
+            { text: 'DP p/ até 5 Funcionários', included: true },
+            { text: 'Apuração ICMS e ISS', included: true },
+            { text: 'Contabilidade Completa', included: true }
           ],
           detailedServices: [
-            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração IRPJ/CSLL/PIS/COFINS', 'EFD Contribuições', 'SPED Fiscal (ICMS/IPI)', 'GIA mensal', 'LALUR/LACS'] },
-            { category: 'DEPARTAMENTO PESSOAL', items: ['Folha de pagamento ilimitada', 'Gestão de benefícios', 'eSocial pleno', 'Auditoria trabalhista', 'Acordos coletivos'] },
-            { category: 'CONTÁBEIS', items: ['Escrituração contábil digital', 'ECD / ECF Anual', 'Consolidação de contas', 'DRE analítica', 'DMPL e DFC'] }
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['IRPJ (trimestral)', 'CSLL (trimestral)', 'PIS/COFINS (mensal)', 'Emissão DARF', 'Controle prazos', 'Apuração ICMS/DIFAL', 'Apuração ISS', 'Retenções na fonte'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Mesmos itens Intermediário 2', 'Gestão de benefícios', 'Auditoria trabalhista'] },
+            { category: 'CONTÁBEIS', items: ['Mesmos itens Intermediário 2', 'ECD / ECF Anual', 'Consolidação de contas'] }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'Comércio',
+      label: 'Comércio',
+      plans: [
+        {
+          id: 'c1',
+          name: 'Básico',
+          subtitle: 'MEI Comércio',
+          price: 100,
+          isPopular: false,
+          features: [
+            { text: 'Declarações MEI', included: true },
+            { text: 'Guia DAS automática', included: true },
+            { text: 'Notas ilimitadas', included: true },
+            { text: 'Suporte fiscal', included: true }
+          ],
+          detailedServices: [
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Guia DAS-MEI mensal', 'DASN-SIMEI anual', 'Controle de faturamento', 'Orientação emissão NF-e'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Orientação previdenciária', 'Auxílio em benefícios'] },
+            { category: 'CONTÁBEIS', items: ['Livro caixa básico', 'Relatório mensal de receitas'] }
+          ]
+        },
+        {
+          id: 'c2',
+          name: 'Intermediário',
+          subtitle: 'Simples Nacional (Sem Func.)',
+          price: 289,
+          isPopular: false,
+          features: [
+            { text: 'Apuração Simples Nacional', included: true },
+            { text: 'Pró-labore Sócios', included: true },
+            { text: 'Folha Funcionários', included: false },
+            { text: 'Lucro Presumido', included: false }
+          ],
+          detailedServices: [
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração mensal Simples (DAS)', 'Envio do PGDAS-D', 'Entrega da DEFIS anual', 'Classificação fiscal', 'Monitoramento faturamento', 'Orientação Notas Fiscais', 'Regularização pendências', 'Parcelamentos'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Encargos pró-labore', 'Orientação trabalhista'] },
+            { category: 'CONTÁBEIS', items: ['Escrituração contábil mensal', 'Balanço Patrimonial', 'DRE', 'Balancetes mensais', 'Livro Diário e Razão', 'Encerramento anual'] }
+          ]
+        },
+        {
+          id: 'c3',
+          name: 'Intermediário 2',
+          subtitle: 'Simples + 5 Func.',
+          price: 630,
+          isPopular: true,
+          features: [
+            { text: 'Tudo do Intermediário', included: true },
+            { text: 'DP p/ até 5 Funcionários', included: true },
+            { text: 'Folha, Férias e 13º', included: true },
+            { text: 'Lucro Presumido', included: false }
+          ],
+          detailedServices: [
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['Todos itens do Intermediário', 'Apuração mensal DAS', 'PGDAS-D', 'Consultoria tributária'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Registro/admissão empregados', 'Elaboração folha pagamento', 'Cálculo pró-labore', 'Encargos Trabalhistas', 'Rescisões', 'Férias e 13º', 'eSocial, Reinf, DCTFWeb'] },
+            { category: 'CONTÁBEIS', items: ['Todos itens do Intermediário', 'Análise de indicadores'] }
+          ]
+        },
+        {
+          id: 'c4',
+          name: 'Profissional',
+          subtitle: 'Lucro Presumido',
+          price: 750,
+          isPopular: false,
+          features: [
+            { text: 'Lucro Presumido', included: true },
+            { text: 'DP p/ até 5 Funcionários', included: true },
+            { text: 'Apuração ICMS e ISS', included: true },
+            { text: 'Contabilidade Completa', included: true }
+          ],
+          detailedServices: [
+            { category: 'FISCAIS / TRIBUTÁRIOS', items: ['IRPJ (trimestral)', 'CSLL (trimestral)', 'PIS/COFINS (mensal)', 'Emissão DARF', 'Controle prazos', 'Apuração ICMS/DIFAL', 'Apuração ISS', 'Retenções na fonte'] },
+            { category: 'DEPARTAMENTO PESSOAL', items: ['Mesmos itens Intermediário 2', 'Gestão de benefícios', 'Auditoria trabalhista'] },
+            { category: 'CONTÁBEIS', items: ['Mesmos itens Intermediário 2', 'ECD / ECF Anual', 'Consolidação de contas'] }
           ]
         }
       ]
@@ -91,10 +173,11 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('Serviços');
   const [editing, setEditing] = useState(false);
   const [clientName, setClientName] = useState('');
-  const [openingFee, setOpeningFee] = useState(''); // Estado para Taxa de Abertura
+  const [openingFee, setOpeningFee] = useState('');
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showProposal, setShowProposal] = useState(false);
   const [personalizedIntro, setPersonalizedIntro] = useState('');
+  const [expandedPlanId, setExpandedPlanId] = useState(null);
 
   useEffect(() => {
     fetch('/api/data')
@@ -120,6 +203,18 @@ const App = () => {
     setData(prev => ({ ... (typeof updater === 'function' ? updater(prev) : updater) }));
   };
 
+  const updatePrice = (categoryId, planId, newPrice) => {
+    const newData = {...data};
+    const catIndex = newData.categories.findIndex(c => c.id === categoryId);
+    if (catIndex > -1) {
+        const planIndex = newData.categories[catIndex].plans.findIndex(p => p.id === planId);
+        if (planIndex > -1) {
+            newData.categories[catIndex].plans[planIndex].price = parseFloat(newPrice);
+            setData(newData);
+        }
+    }
+  };
+
   const handleContract = (plan) => {
     const intro = `Prezado(a) ${clientName || 'Cliente'},\n\nApresentamos nossa proposta técnica para o plano **${plan.name}**. Na **${data.officeName}**, garantimos conformidade legal absoluta e agilidade estratégica para impulsionar seu negócio.`;
     
@@ -129,28 +224,30 @@ const App = () => {
       clientName: clientName || 'Cliente Particular',
       planName: plan.name,
       price: plan.price,
-      openingFee: openingFee, // Salva a taxa de abertura se houver
+      openingFee: openingFee,
       planData: JSON.parse(JSON.stringify(plan))
     };
     
     updateData(prev => ({ ...prev, history: [newRecord, ...prev.history] }));
-    setSelectedPlan(newRecord); // Usa o registro completo, incluindo openingFee
+    setSelectedPlan(newRecord);
     setPersonalizedIntro(intro);
     setShowProposal(true);
+  };
+
+  const toggleDetails = (planId) => {
+    setExpandedPlanId(expandedPlanId === planId ? null : planId);
   };
 
   if (loading) return <div className="p-20 text-center text-virgula-green font-bold">Iniciando Banco de Dados...</div>;
 
   if (showProposal && selectedPlan) {
-    // Determina se usamos o preço do plano original ou do histórico (para suportar reabertura)
     const displayPrice = selectedPlan.price || selectedPlan.planData?.price;
-    const displayOpening = selectedPlan.openingFee; // Pode vir do histórico ou do estado atual
+    const displayOpening = selectedPlan.openingFee;
 
     return (
       <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto">
         <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm page-break-avoid relative">
           
-          {/* Header PROPOSTA */}
           <div className="flex justify-between items-center mb-6 border-b-2 border-virgula-green pb-2">
             <div className="flex items-center gap-2">
               <div className="text-virgula-green">
@@ -175,16 +272,13 @@ const App = () => {
             </p>
           </div>
 
-          {/* Seção de Preços (Dinâmica: 1 ou 2 valores) */}
           <div className="flex flex-col mb-6">
             <div className={`flex items-center bg-virgula-green text-white rounded-t-sm shadow-md overflow-hidden`}>
-              {/* Coluna Nome do Plano */}
               <div className="flex-1 px-4 py-3 border-r border-white/20">
                 <p className="text-[8px] font-black uppercase tracking-widest opacity-80 leading-none mb-1">Plano Selecionado</p>
                 <h3 className="text-lg font-black uppercase leading-none">{selectedPlan.planName || selectedPlan.name}</h3>
               </div>
 
-              {/* Coluna Abertura (Opcional) */}
               {displayOpening && (
                 <div className="px-5 py-3 border-r border-white/20 text-right bg-white/10 min-w-[140px]">
                   <p className="text-[7px] font-bold opacity-90 uppercase leading-none mb-1">Setup / Abertura</p>
@@ -194,21 +288,19 @@ const App = () => {
                 </div>
               )}
 
-              {/* Coluna Mensalidade */}
               <div className="px-5 py-3 text-right min-w-[140px]">
                 <p className="text-[7px] font-bold opacity-80 uppercase leading-none mb-1">Honorários Mensais</p>
                 <p className="text-2xl font-black leading-none">R$ {displayPrice.toLocaleString('pt-BR')}</p>
               </div>
             </div>
 
-            {/* Escopo em 3 Colunas Fixas */}
             <div className="grid grid-cols-3 gap-4 border-x border-b border-gray-100 p-4 bg-white print-grid-3">
               {[
                 { label: '1. FISCAIS / TRIBUTÁRIOS', key: 'FISCAIS' },
                 { label: '2. DEPARTAMENTO PESSOAL', key: 'DEPARTAMENTO' },
                 { label: '3. CONTÁBEIS', key: 'CONTÁBEIS' }
               ].map((column) => {
-                const planDetails = selectedPlan.planData || selectedPlan; // Fallback para objeto direto ou histórico
+                const planDetails = selectedPlan.planData || selectedPlan;
                 const catData = planDetails.detailedServices?.find(s => 
                   s.category.toUpperCase().includes(column.key)
                 );
@@ -271,7 +363,6 @@ const App = () => {
   return (
     <div className="min-h-screen bg-virgula-dark text-white p-4 md:p-6 font-inter">
       <header className="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        {/* Header Principal da Aplicação */}
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-virgula-card border border-white/10 rounded-2xl flex items-center justify-center shadow-lg shadow-black/50">
              <Calculator className="text-virgula-green w-7 h-7" />
@@ -284,14 +375,13 @@ const App = () => {
           </div>
         </div>
         <button onClick={() => setEditing(!editing)} className={`px-5 py-2.5 rounded-xl font-black text-[11px] uppercase transition-all flex items-center gap-2 ${editing ? 'bg-virgula-green text-virgula-dark' : 'bg-white/5 border border-white/10 hover:bg-white/10'}`}>
-          {editing ? '💾 FINALIZAR EDIÇÃO' : '⚙️ CONFIGURAR PLANOS'}
+          {editing ? '💾 SALVAR VALORES' : '⚙️ CONFIGURAR PLANOS'}
         </button>
       </header>
 
       <main className="max-w-7xl mx-auto">
         <div className="bg-virgula-card border border-virgula-border rounded-2xl p-6 mb-8 flex flex-col items-end gap-4">
           
-          {/* Inputs do Cliente e Taxa de Abertura */}
           <div className="flex flex-col md:flex-row gap-4 w-full">
             <div className="flex-1">
                 <label className="text-[10px] uppercase font-black text-virgula-muted mb-2 block">Nome do Cliente Prospecto</label>
@@ -330,31 +420,84 @@ const App = () => {
             )) : <div className="text-center p-16 text-virgula-muted text-xs uppercase font-black border border-dashed border-white/10 rounded-3xl">Histórico vazio: Gere novas propostas para salvá-las aqui.</div>}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {currentCategory?.plans.map((plan) => (
-              <div key={plan.id} className="bg-virgula-card border border-virgula-border rounded-3xl p-8 flex flex-col h-full hover:border-virgula-green/30 transition-all shadow-2xl group">
-                <div className="mb-6">
-                  <h3 className="text-xl font-black uppercase leading-tight group-hover:text-virgula-green transition-colors">{plan.name}</h3>
-                  <div className="text-3xl font-black text-virgula-green mt-1">R$ {plan.price.toLocaleString('pt-BR')}</div>
-                  <p className="text-[9px] text-virgula-muted uppercase font-bold tracking-widest mt-1 opacity-70">{plan.subtitle}</p>
+              <div 
+                key={plan.id} 
+                className={`bg-virgula-card border rounded-xl p-5 hover:-translate-y-1 transition-all duration-300 flex flex-col h-full relative overflow-hidden group ${plan.isPopular ? 'border-virgula-green hover:shadow-[0_0_30px_rgba(16,185,129,0.15)]' : 'border-white/5 hover:border-virgula-green/50'}`}
+              >
+                {plan.isPopular && (
+                    <div className="absolute top-0 right-0 bg-virgula-green text-virgula-dark text-[9px] font-bold px-2 py-1 rounded-bl-lg">POPULAR</div>
+                )}
+                
+                <div className="mb-4">
+                  <h3 className="text-lg font-bold text-white">{plan.name}</h3>
+                  <p className="text-virgula-muted text-xs uppercase tracking-wider font-semibold mt-1 opacity-70">{plan.subtitle}</p>
                 </div>
                 
-                <div className="flex-1 mb-8">
-                   <ul className="space-y-2">
-                      {plan.features.map((f, i) => (
-                        <li key={i} className="text-[11px] flex items-center gap-3 text-virgula-muted">
-                           <span className="w-2 h-2 rounded-full bg-virgula-green shadow-sm shadow-virgula-green/50"></span> {f.text}
-                        </li>
-                      ))}
-                   </ul>
+                <div className="price-container mb-4 h-14 flex flex-col justify-center">
+                  <span className="text-[10px] text-virgula-muted block">A partir de</span>
+                  <div className="flex items-end gap-1">
+                    {editing ? (
+                        <div className="flex items-center gap-1">
+                            <span className="text-2xl font-bold text-virgula-green">R$</span>
+                            <input 
+                                type="number" 
+                                value={plan.price} 
+                                onChange={(e) => updatePrice(activeTab, plan.id, e.target.value)}
+                                className="bg-white/10 text-white font-bold text-xl w-24 px-2 rounded focus:bg-white/20 outline-none border border-virgula-green"
+                            />
+                        </div>
+                    ) : (
+                        <div className="text-2xl font-bold text-white flex items-end gap-1">
+                            R$ {plan.price.toLocaleString('pt-BR')} <span className="text-xs font-normal text-virgula-muted mb-1">/mês</span>
+                        </div>
+                    )}
+                  </div>
                 </div>
+
+                <ul className="feature-list mb-4 space-y-2">
+                   {plan.features.map((f, i) => (
+                     <li key={i} className="text-[12px] flex items-center gap-3 text-virgula-muted">
+                        {f.included ? <Check size={14} className="text-virgula-green" /> : <X size={14} className="text-red-500" />}
+                        <span className={f.included ? '' : 'text-virgula-muted/50'}>{f.text}</span>
+                     </li>
+                   ))}
+                </ul>
+
+                <button onClick={() => toggleDetails(plan.id)} className="text-xs text-virgula-green hover:text-white underline mb-6 text-left flex items-center gap-1">
+                    {expandedPlanId === plan.id ? 'Ocultar detalhes' : 'Ver lista completa de serviços'}
+                    {expandedPlanId === plan.id ? <ChevronUp size={12}/> : <ChevronDown size={12}/>}
+                </button>
+                
+                {expandedPlanId === plan.id && (
+                    <div className="mb-6 p-3 bg-black/20 rounded-lg space-y-3 animate-in fade-in zoom-in-95 duration-200">
+                        {plan.detailedServices.map((section, idx) => (
+                            <div key={idx}>
+                                <h4 className="text-[10px] font-bold text-white uppercase mb-1 border-b border-white/10 pb-1">{section.category}</h4>
+                                <ul className="space-y-1">
+                                    {section.items.map((item, itemIdx) => (
+                                        <li key={itemIdx} className="text-[10px] text-virgula-muted flex items-start gap-1">
+                                            <span className="text-virgula-green text-[8px] mt-0.5">●</span> {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <button 
                   onClick={() => handleContract(plan)} 
                   disabled={editing} 
-                  className={`w-full py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all ${editing ? 'opacity-20 cursor-not-allowed' : 'bg-virgula-green text-virgula-dark shadow-2xl shadow-virgula-green/20 hover:scale-105 active:scale-95'}`}
+                  className={`w-full py-2.5 rounded-lg font-bold text-sm transition-colors mt-auto uppercase tracking-wide
+                    ${editing ? 'opacity-20 cursor-not-allowed bg-white/5' : 
+                      plan.isPopular 
+                      ? 'bg-virgula-green text-virgula-dark hover:bg-virgula-greenHover shadow-lg shadow-virgula-green/10' 
+                      : 'bg-virgula-card border border-virgula-green text-virgula-green hover:bg-virgula-green hover:text-virgula-dark'
+                    }`}
                 >
-                  Gerar Proposta
+                  Contratar
                 </button>
               </div>
             ))}
