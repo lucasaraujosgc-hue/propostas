@@ -238,10 +238,10 @@ const App = () => {
 
     return (
       <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto">
-        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm page-break-avoid relative print:p-0 print:border-none print:shadow-none print:w-full">
+        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm relative print:p-0 print:border-none print:shadow-none print:w-full">
           
           {/* Cabeçalho */}
-          <div className="flex justify-between items-center mb-8 border-b-2 border-virgula-green pb-3 print:mb-6 print:pb-2">
+          <div className="flex justify-between items-center mb-8 border-b-2 border-virgula-green pb-3 page-break-avoid print:mb-6 print:pb-2">
             <div className="flex items-center gap-3">
               <div className="text-virgula-green">
                 <Calculator size={40} strokeWidth={2.5} className="print:w-10 print:h-10" />
@@ -260,7 +260,7 @@ const App = () => {
           </div>
 
           {/* Intro Editável - Exibida como texto na impressão para não cortar */}
-          <div className="mb-8 print:mb-6">
+          <div className="mb-8 print:mb-6 page-break-avoid">
              <div className="text-[11px] font-bold text-gray-800 italic mb-2 print:text-[10px] print:text-black">Prezado(a) {selectedPlan.clientName || 'Cliente'},</div>
              
              {/* Textarea para edição na tela */}
@@ -279,11 +279,11 @@ const App = () => {
           </div>
 
           {/* Barra Verde - Layout idêntico ao PDF */}
-          <div className="flex mb-8 bg-virgula-green text-white print:bg-virgula-green print:mb-6">
+          <div className="flex mb-8 bg-virgula-green text-white page-break-avoid print:mb-4 print:text-sm">
               {/* Coluna 1: Nome do Plano (Larga) */}
               <div className="flex-1 p-4 pl-5 border-r border-white/20 print:p-3 print:pl-4 print:border-white/30">
                  <p className="text-[10px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[9px] print:text-white/90">Plano Selecionado</p>
-                 <h3 className="text-2xl font-black uppercase leading-tight print:text-2xl print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
+                 <h3 className="text-2xl font-black uppercase leading-tight print:text-lg print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
               </div>
               
               {/* Coluna 2: Setup (Se existir) */}
@@ -299,7 +299,7 @@ const App = () => {
               {/* Coluna 3: Honorários */}
               <div className="w-48 p-4 text-center flex flex-col justify-center print:w-44 print:p-3">
                   <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Honorários Mensais</p>
-                  <h3 className="text-3xl font-black print:text-3xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</h3>
+                  <h3 className="text-3xl font-black print:text-2xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</h3>
               </div>
           </div>
 
