@@ -90,6 +90,7 @@ const App = () => {
   const [activeTab, setActiveTab] = useState('Serviços');
   const [editing, setEditing] = useState(false);
   const [clientName, setClientName] = useState('');
+  const [openingFee, setOpeningFee] = useState(''); // Estado para Taxa de Abertura
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [showProposal, setShowProposal] = useState(false);
   const [personalizedIntro, setPersonalizedIntro] = useState('');
@@ -127,11 +128,12 @@ const App = () => {
       clientName: clientName || 'Cliente Particular',
       planName: plan.name,
       price: plan.price,
+      openingFee: openingFee, // Salva a taxa de abertura se houver
       planData: JSON.parse(JSON.stringify(plan))
     };
     
     updateData(prev => ({ ...prev, history: [newRecord, ...prev.history] }));
-    setSelectedPlan(plan);
+    setSelectedPlan(newRecord); // Usa o registro completo, incluindo openingFee
     setPersonalizedIntro(intro);
     setShowProposal(true);
   };
@@ -139,9 +141,13 @@ const App = () => {
   if (loading) return <div className="p-20 text-center text-virgula-green font-bold">Iniciando Banco de Dados...</div>;
 
   if (showProposal && selectedPlan) {
+    // Determina se usamos o preço do plano original ou do histórico (para suportar reabertura)
+    const displayPrice = selectedPlan.price || selectedPlan.planData?.price;
+    const displayOpening = selectedPlan.openingFee; // Pode vir do histórico ou do estado atual
+
     return (
-      <div className="min-h-screen p-1 md:p-4 bg-gray-200 flex flex-col items-center font-sans">
-        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm">
+      <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto">
+        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm page-break-avoid relative">
           
           {/* Header */}
           <div className="flex justify-between items-center mb-6 border-b-2 border-virgula-green pb-2">
@@ -150,37 +156,52 @@ const App = () => {
               <p className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Inteligência Contábil & Estratégica</p>
             </div>
             <div className="text-right">
-              <p className="text-[8px] font-bold text-gray-400 uppercase">Proposta de Serviços para</p>
-              <h2 className="text-sm font-bold leading-none">{clientName || 'Cliente Particular'}</h2>
+              <p className="text-[8px] font-bold text-gray-400 uppercase">Proposta Preparada para</p>
+              <h2 className="text-sm font-bold leading-none">{selectedPlan.clientName || clientName || 'Cliente Particular'}</h2>
             </div>
           </div>
 
-          <div className="mb-6 bg-gray-50 p-3 rounded-sm border-l-4 border-virgula-green">
-            <p className="text-[10px] text-gray-600 leading-normal italic whitespace-pre-wrap">
+          <div className="mb-6 bg-gray-50 p-4 rounded-sm border-l-4 border-virgula-green">
+            <p className="text-[10px] text-gray-600 leading-relaxed italic whitespace-pre-wrap">
               {personalizedIntro.replace(/\*\*(.*?)\*\*/g, '$1')}
             </p>
           </div>
 
+          {/* Seção de Preços (Dinâmica: 1 ou 2 valores) */}
           <div className="flex flex-col mb-6">
-            <div className="flex justify-between items-center bg-virgula-green text-white px-4 py-3 rounded-t-sm shadow-md">
-              <div className="flex flex-col">
+            <div className={`flex items-center bg-virgula-green text-white rounded-t-sm shadow-md overflow-hidden`}>
+              {/* Coluna Nome do Plano */}
+              <div className="flex-1 px-4 py-3 border-r border-white/20">
                 <p className="text-[8px] font-black uppercase tracking-widest opacity-80 leading-none mb-1">Plano Selecionado</p>
-                <h3 className="text-lg font-black uppercase leading-none">{selectedPlan.name}</h3>
+                <h3 className="text-lg font-black uppercase leading-none">{selectedPlan.planName || selectedPlan.name}</h3>
               </div>
-              <div className="text-right">
-                <p className="text-[8px] font-bold opacity-80 uppercase leading-none">Honorários Mensais</p>
-                <p className="text-2xl font-black leading-none">R$ {selectedPlan.price.toLocaleString('pt-BR')}</p>
+
+              {/* Coluna Abertura (Opcional) */}
+              {displayOpening && (
+                <div className="px-5 py-3 border-r border-white/20 text-right bg-white/10 min-w-[140px]">
+                  <p className="text-[7px] font-bold opacity-90 uppercase leading-none mb-1">Setup / Abertura</p>
+                  <p className="text-xl font-black leading-none">
+                    {isNaN(displayOpening) ? displayOpening : `R$ ${parseFloat(displayOpening).toLocaleString('pt-BR')}`}
+                  </p>
+                </div>
+              )}
+
+              {/* Coluna Mensalidade */}
+              <div className="px-5 py-3 text-right min-w-[140px]">
+                <p className="text-[7px] font-bold opacity-80 uppercase leading-none mb-1">Honorários Mensais</p>
+                <p className="text-2xl font-black leading-none">R$ {displayPrice.toLocaleString('pt-BR')}</p>
               </div>
             </div>
 
-            {/* Escopo em 3 Colunas Fixas (Usa 9px para leitura ideal na impressão) */}
+            {/* Escopo em 3 Colunas Fixas */}
             <div className="grid grid-cols-3 gap-4 border-x border-b border-gray-100 p-4 bg-white print-grid-3">
               {[
                 { label: '1. FISCAIS / TRIBUTÁRIOS', key: 'FISCAIS' },
                 { label: '2. DEPARTAMENTO PESSOAL', key: 'DEPARTAMENTO' },
                 { label: '3. CONTÁBEIS', key: 'CONTÁBEIS' }
               ].map((column) => {
-                const catData = selectedPlan.detailedServices?.find(s => 
+                const planDetails = selectedPlan.planData || selectedPlan; // Fallback para objeto direto ou histórico
+                const catData = planDetails.detailedServices?.find(s => 
                   s.category.toUpperCase().includes(column.key)
                 );
                 const items = catData ? catData.items : [];
@@ -206,17 +227,17 @@ const App = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-8 mb-8 border-t border-gray-100 pt-4">
+          <div className="grid grid-cols-2 gap-8 mb-8 border-t border-gray-100 pt-4 page-break-avoid">
              <div className="text-[8px] text-gray-400 uppercase leading-relaxed italic">
                 * Valores não contemplam taxas públicas, alvarás ou certificados digitais.<br/>
                 * Reajuste anual pelo IGPM/FGV acumulado dos últimos 12 meses.
              </div>
              <div className="text-right text-[9px] text-gray-500 font-bold uppercase tracking-widest">
-                Validade: 10 dias | {new Date().toLocaleDateString()}
+                Validade: 10 dias | {selectedPlan.date || new Date().toLocaleDateString()}
              </div>
           </div>
 
-          <div className="flex justify-between items-end">
+          <div className="flex justify-between items-end page-break-avoid">
             <div className="flex flex-col">
               <p className="text-[6px] text-gray-400 uppercase font-black tracking-widest mb-1">Responsável Técnico</p>
               <div className="flex items-center gap-2">
@@ -255,12 +276,21 @@ const App = () => {
       </header>
 
       <main className="max-w-7xl mx-auto">
-        <div className="bg-virgula-card border border-virgula-border rounded-2xl p-6 mb-8 flex flex-col md:flex-row gap-6 items-end">
-          <div className="flex-1 w-full">
-            <label className="text-[10px] uppercase font-black text-virgula-muted mb-2 block">Nome do Cliente Prospecto</label>
-            <input value={clientName} onChange={e => setClientName(e.target.value)} placeholder="Ex: Restaurante Porto Rico LTDA" className="w-full bg-virgula-dark border border-white/5 rounded-xl px-4 py-4 text-base focus:border-virgula-green outline-none transition-all shadow-inner" />
+        <div className="bg-virgula-card border border-virgula-border rounded-2xl p-6 mb-8 flex flex-col items-end gap-4">
+          
+          {/* Inputs do Cliente e Taxa de Abertura */}
+          <div className="flex flex-col md:flex-row gap-4 w-full">
+            <div className="flex-1">
+                <label className="text-[10px] uppercase font-black text-virgula-muted mb-2 block">Nome do Cliente Prospecto</label>
+                <input value={clientName} onChange={e => setClientName(e.target.value)} placeholder="Ex: Restaurante Porto Rico LTDA" className="w-full bg-virgula-dark border border-white/5 rounded-xl px-4 py-4 text-base focus:border-virgula-green outline-none transition-all shadow-inner text-white" />
+            </div>
+            <div className="w-full md:w-64">
+                <label className="text-[10px] uppercase font-black text-virgula-muted mb-2 block">Taxa de Abertura (Opcional)</label>
+                <input type="text" value={openingFee} onChange={e => setOpeningFee(e.target.value)} placeholder="Ex: 1.500,00" className="w-full bg-virgula-dark border border-white/5 rounded-xl px-4 py-4 text-base focus:border-virgula-green outline-none transition-all shadow-inner text-white" />
+            </div>
           </div>
-          <div className="flex gap-3">
+
+          <div className="flex gap-3 w-full justify-end flex-wrap">
             {data.categories.map(cat => (
               <button key={cat.id} onClick={() => setActiveTab(cat.id)} className={`px-6 py-4 rounded-xl text-[11px] font-black uppercase transition-all ${activeTab === cat.id ? 'bg-virgula-green text-virgula-dark shadow-xl shadow-virgula-green/30' : 'bg-white/5 text-virgula-muted hover:bg-white/10'}`}>{cat.label}</button>
             ))}
@@ -274,10 +304,13 @@ const App = () => {
               <div key={record.id} className="bg-virgula-card border border-white/5 p-6 rounded-2xl flex items-center justify-between hover:border-virgula-green/40 transition-all group shadow-lg">
                 <div>
                   <p className="text-lg font-black text-white group-hover:text-virgula-green transition-colors">{record.clientName}</p>
-                  <p className="text-[10px] text-virgula-muted uppercase font-bold tracking-widest">{record.date} • {record.planName} • R$ {record.price.toLocaleString('pt-BR')}</p>
+                  <p className="text-[10px] text-virgula-muted uppercase font-bold tracking-widest">
+                    {record.date} • {record.planName} • R$ {record.price.toLocaleString('pt-BR')}
+                    {record.openingFee && ` • Abertura: R$ ${record.openingFee}`}
+                  </p>
                 </div>
                 <div className="flex gap-3">
-                  <button onClick={() => { setSelectedPlan(record.planData); setClientName(record.clientName); setShowProposal(true); }} className="px-5 py-2.5 bg-virgula-green text-virgula-dark rounded-xl text-[10px] font-black uppercase hover:scale-105 active:scale-95 transition-all">Reabrir</button>
+                  <button onClick={() => { setSelectedPlan(record); setClientName(record.clientName); setOpeningFee(record.openingFee || ''); setShowProposal(true); }} className="px-5 py-2.5 bg-virgula-green text-virgula-dark rounded-xl text-[10px] font-black uppercase hover:scale-105 active:scale-95 transition-all">Reabrir</button>
                   <button onClick={() => updateData(p => ({...p, history: p.history.filter(h => h.id !== record.id)}))} className="px-5 py-2.5 bg-red-500/10 text-red-500 rounded-xl text-[10px] font-black uppercase hover:bg-red-500 hover:text-white transition-all">Excluir</button>
                 </div>
               </div>
