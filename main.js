@@ -123,11 +123,18 @@ const App = () => {
   }, [data]);
 
   const updateData = (updater) => {
-    setData(prev => ({ ... (typeof updater === 'function' ? updater(prev) : updater) }));
+    setData(prev => {
+        // Correção para garantir merge correto do estado
+        if (typeof updater === 'function') {
+            return updater(prev);
+        }
+        return { ...prev, ...updater };
+    });
   };
 
   const updateCategoryLabel = (index, newLabel) => {
-    const newData = {...data};
+    // Clone profundo para evitar mutação direta
+    const newData = JSON.parse(JSON.stringify(data));
     newData.categories[index].label = newLabel;
     newData.categories[index].id = newLabel;
     if (activeTab === data.categories[index].id) {
@@ -252,16 +259,23 @@ const App = () => {
             </div>
           </div>
 
-          {/* Intro Editável - Com auto-ajuste de altura para impressão */}
+          {/* Intro Editável - Exibida como texto na impressão para não cortar */}
           <div className="mb-8 print:mb-6">
              <div className="text-[11px] font-bold text-gray-800 italic mb-2 print:text-[10px] print:text-black">Prezado(a) {selectedPlan.clientName || 'Cliente'},</div>
+             
+             {/* Textarea para edição na tela */}
              <textarea
                 value={personalizedIntro}
                 onChange={(e) => setPersonalizedIntro(e.target.value)}
-                className="w-full bg-transparent resize-none outline-none text-sm text-gray-600 leading-relaxed italic h-auto overflow-hidden print:text-sm print:text-black print:overflow-visible"
+                className="w-full bg-transparent resize-none outline-none text-sm text-gray-600 leading-relaxed italic h-auto overflow-hidden print:hidden"
                 rows={4}
                 style={{minHeight: '80px'}}
             />
+
+            {/* Div para impressão (garante que todo o texto seja impresso) */}
+            <div className="hidden print:block text-sm text-black leading-relaxed italic text-justify whitespace-pre-wrap">
+                {personalizedIntro}
+            </div>
           </div>
 
           {/* Barra Verde - Layout idêntico ao PDF */}
@@ -395,9 +409,10 @@ const App = () => {
                 <label className="text-[10px] uppercase font-black text-virgula-muted mb-2 block flex items-center gap-2">
                     <Edit3 size={12} /> Modelo de Texto da Proposta (Padrão)
                 </label>
+                {/* Correção do bug de crash aqui: usando callback no updateData */}
                 <textarea 
                     value={data.introTemplate || DEFAULT_DATA.introTemplate}
-                    onChange={(e) => updateData({introTemplate: e.target.value})}
+                    onChange={(e) => updateData(prev => ({...prev, introTemplate: e.target.value}))}
                     className="w-full bg-black/20 border border-white/5 rounded-xl px-4 py-3 text-xs text-white focus:border-virgula-green outline-none min-h-[80px]"
                     placeholder="Use {{PLANO}} para o nome do plano e {{EMPRESA}} para o nome da contabilidade."
                 />
