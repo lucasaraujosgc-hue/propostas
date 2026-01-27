@@ -49,12 +49,12 @@
 
         @media print {
             @page {
-                margin: 0.5cm;
+                margin: 0.4cm; /* Reduced margin for A4 fit */
                 size: A4 portrait;
             }
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            #root { height: auto !important; min-height: 0 !important; }
+            #root { height: auto !important; min-height: 0 !important; display: block !important; }
             .bg-virgula-dark { background: white !important; }
             .bg-virgula-card { background: white !important; border: 1px solid #eee !important; color: black !important; }
             .text-white { color: black !important; }
