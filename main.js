@@ -124,7 +124,6 @@ const App = () => {
 
   const updateData = (updater) => {
     setData(prev => {
-        // Correção para garantir merge correto do estado
         if (typeof updater === 'function') {
             return updater(prev);
         }
@@ -133,7 +132,6 @@ const App = () => {
   };
 
   const updateCategoryLabel = (index, newLabel) => {
-    // Clone profundo para evitar mutação direta
     const newData = JSON.parse(JSON.stringify(data));
     newData.categories[index].label = newLabel;
     newData.categories[index].id = newLabel;
@@ -237,8 +235,9 @@ const App = () => {
     const displayOpening = selectedPlan.openingFee;
 
     return (
-      <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto">
-        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm relative print:p-0 print:border-none print:shadow-none print:w-full">
+      // CORREÇÃO: Adicionado print:block print:h-auto print:overflow-visible para permitir múltiplas páginas
+      <div className="min-h-screen p-4 md:p-6 bg-gray-200 flex flex-col items-center font-sans overflow-y-auto print:block print:h-auto print:overflow-visible print:bg-white print:p-0">
+        <div className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl p-8 border border-gray-300 proposal-container rounded-sm relative print:p-0 print:border-none print:shadow-none print:w-full print:max-w-none">
           
           {/* Cabeçalho */}
           <div className="flex justify-between items-center mb-8 border-b-2 border-virgula-green pb-3 page-break-avoid print:mb-6 print:pb-2">
@@ -259,11 +258,10 @@ const App = () => {
             </div>
           </div>
 
-          {/* Intro Editável - Exibida como texto na impressão para não cortar */}
+          {/* Intro Editável */}
           <div className="mb-8 print:mb-6 page-break-avoid">
              <div className="text-[11px] font-bold text-gray-800 italic mb-2 print:text-[10px] print:text-black">Prezado(a) {selectedPlan.clientName || 'Cliente'},</div>
              
-             {/* Textarea para edição na tela */}
              <textarea
                 value={personalizedIntro}
                 onChange={(e) => setPersonalizedIntro(e.target.value)}
@@ -272,32 +270,28 @@ const App = () => {
                 style={{minHeight: '80px'}}
             />
 
-            {/* Div para impressão (garante que todo o texto seja impresso) */}
             <div className="hidden print:block text-sm text-black leading-relaxed italic text-justify whitespace-pre-wrap">
                 {personalizedIntro}
             </div>
           </div>
 
-          {/* Barra Verde - Layout idêntico ao PDF */}
+          {/* Barra Verde - Ajustado print:w-32 e print:w-40 para caber no A4 */}
           <div className="flex mb-8 bg-virgula-green text-white page-break-avoid print:mb-4 print:text-sm">
-              {/* Coluna 1: Nome do Plano (Larga) */}
               <div className="flex-1 p-4 pl-5 border-r border-white/20 print:p-3 print:pl-4 print:border-white/30">
                  <p className="text-[10px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[9px] print:text-white/90">Plano Selecionado</p>
                  <h3 className="text-2xl font-black uppercase leading-tight print:text-lg print:text-white">{selectedPlan.planName || selectedPlan.name}</h3>
               </div>
               
-              {/* Coluna 2: Setup (Se existir) */}
               {displayOpening && (
-                  <div className="w-40 p-4 border-r border-white/20 text-center flex flex-col justify-center print:w-36 print:p-3 print:border-white/30">
+                  <div className="w-40 p-4 border-r border-white/20 text-center flex flex-col justify-center print:w-32 print:p-3 print:border-white/30">
                       <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Setup / Abertura</p>
-                      <h3 className="text-xl font-black print:text-xl print:text-white">
+                      <h3 className="text-xl font-black print:text-lg print:text-white">
                         {isNaN(displayOpening) ? displayOpening : `R$ ${parseFloat(displayOpening).toLocaleString('pt-BR')}`}
                       </h3>
                   </div>
               )}
 
-              {/* Coluna 3: Honorários */}
-              <div className="w-48 p-4 text-center flex flex-col justify-center print:w-44 print:p-3">
+              <div className="w-48 p-4 text-center flex flex-col justify-center print:w-40 print:p-3">
                   <p className="text-[9px] font-bold uppercase tracking-widest opacity-90 mb-1 print:text-[8px] print:text-white/90">Honorários Mensais</p>
                   <h3 className="text-3xl font-black print:text-2xl print:text-white">R$ {displayPrice.toLocaleString('pt-BR')}</h3>
               </div>
@@ -336,7 +330,7 @@ const App = () => {
               })}
             </div>
 
-          {/* Rodapé - Espaçamento Flexível para empurrar para baixo se necessário */}
+          {/* Rodapé */}
           <div className="mt-12 pt-4 border-t border-gray-200 grid grid-cols-2 gap-8 page-break-avoid print:mt-8 print:pt-4 print:border-gray-300">
              <div className="text-[9px] text-gray-500 uppercase leading-relaxed italic print:text-[8px] print:text-gray-600">
                 * Valores não contemplam taxas públicas, alvarás ou certificados digitais.<br/>
