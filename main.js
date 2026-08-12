@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Calculator, Check, X, ChevronDown, ChevronUp, Plus, Trash2, Edit3, Send, Download, Copy, FileText, CheckCircle, Clock, Smartphone, Mail, Lock } from 'lucide-react';
 
 const DEFAULT_DATA = {
-  introTemplate: "Apresentamos nossa proposta técnica para o plano **{{PLANO}}**. Na **{{EMPRESA}}**, garantimos conformidade legal absoluta e agilidade estratégica para impulsionar seu negócio.",
+  introTemplate: "Apresentamos nossa proposta técnica para o plano **{{PLANO}}**.\n\nNa **{{EMPRESA}}**, garantimos conformidade legal absoluta e agilidade estratégica para impulsionar seu negócio.\n\nNesses valores já estão inclusos as taxas (da JUCEB) de constituição da empresa.\n\nAs taxas da Junta Comercial já estão inclusas no valor da abertura do CNPJ.",
   categories: [
     {
       id: 'Serviços',
@@ -58,6 +58,17 @@ const downloadPDF = (elementId, filename) => {
     }, 100);
 };
 
+const renderBoldText = (text) => {
+    if (!text) return null;
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+        if (part.startsWith('**') && part.endsWith('**')) {
+            return <strong key={i} className="font-bold">{part.slice(2, -2)}</strong>;
+        }
+        return part;
+    });
+};
+
 const ProposalDocument = ({ proposal, officeData }) => {
     const data = proposal.data;
     const plans = data.plans ? data.plans : (data.plan ? [{ ...data.plan, openingFee: data.openingFee }] : []);
@@ -84,7 +95,7 @@ const ProposalDocument = ({ proposal, officeData }) => {
           <div className="mb-8 page-break-avoid">
              <div className="text-[11px] font-bold text-foreground italic mb-2">Prezado(a) {data.clientName},</div>
              <div className="text-[17px] text-foreground/90 leading-relaxed italic whitespace-pre-wrap">
-                {data.intro}
+                {renderBoldText(data.intro)}
              </div>
           </div>
 
@@ -106,14 +117,35 @@ const ProposalDocument = ({ proposal, officeData }) => {
                      </div>
                      
                      <div className="flex flex-col w-full sm:w-56">
-                         {p.openingFee && (
+                         {p.fees && p.fees.filter(fee => fee.value.trim() !== '').length > 0 ? (
+                             <div className="flex flex-col border-b border-primary/20 bg-card relative">
+                                 <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground text-center pt-3 pb-1">Taxas de Abertura</div>
+                                 {p.fees.filter(fee => fee.value.trim() !== '').map((fee, feeIdx, arr) => (
+                                     <React.Fragment key={feeIdx}>
+                                         <div className="p-3 flex flex-col justify-center text-center">
+                                             <p className="text-[10px] font-semibold text-foreground mb-0.5 leading-tight">{fee.label || 'Taxa'}</p>
+                                             <h3 className="text-[17px] font-bold text-primary">
+                                                 {isNaN(fee.value) ? fee.value : `R$ ${parseFloat(fee.value).toLocaleString('pt-BR')}`}
+                                             </h3>
+                                         </div>
+                                         {feeIdx < arr.length - 1 && (
+                                             <div className="flex items-center justify-center my-0.5">
+                                                 <div className="h-px bg-border flex-1"></div>
+                                                 <span className="text-[9px] font-bold text-muted-foreground px-2 bg-card">OU</span>
+                                                 <div className="h-px bg-border flex-1"></div>
+                                             </div>
+                                         )}
+                                     </React.Fragment>
+                                 ))}
+                             </div>
+                         ) : p.openingFee ? (
                              <div className="p-4 border-b border-primary/20 flex flex-col justify-center text-center bg-card">
                                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-1">Setup / Abertura</p>
                                  <h3 className="text-lg font-bold text-foreground">
                                      {isNaN(p.openingFee) ? p.openingFee : `R$ ${parseFloat(p.openingFee).toLocaleString('pt-BR')}`}
                                  </h3>
                              </div>
-                         )}
+                         ) : null}
                          <div className="p-5 flex-1 flex flex-col justify-center text-center bg-primary text-primary-foreground">
                              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-80 mb-1">Honorários Mensais</p>
                              <h3 className="text-3xl font-bold font-serif whitespace-nowrap">R$ {p.price.toLocaleString('pt-BR')}</h3>
@@ -203,7 +235,12 @@ const ProposalDocument = ({ proposal, officeData }) => {
                   <p className="text-sm text-foreground"><strong>Data/Hora:</strong> {new Date(proposal.acceptedAt).toLocaleString('pt-BR')}</p>
                   {plans.length > 1 && proposal.acceptanceData.selectedPlanId && (
                       <p className="text-sm text-foreground font-bold mt-1">
-                          <strong>Opção Escolhida:</strong> {plans.find(p => p.id === proposal.acceptanceData.selectedPlanId)?.name}
+                          <strong>Plano Escolhido:</strong> {plans.find(p => p.id === proposal.acceptanceData.selectedPlanId)?.name}
+                      </p>
+                  )}
+                  {proposal.acceptanceData.selectedFeeLabel && (
+                      <p className="text-sm text-foreground font-bold mt-1">
+                          <strong>Tipo de Abertura:</strong> {proposal.acceptanceData.selectedFeeLabel}
                       </p>
                   )}
                   <p className="text-xs text-primary mt-3">ID do Aceite: {proposal.id}</p>
@@ -220,6 +257,7 @@ const PublicProposal = ({ id }) => {
     const [acceptMode, setAcceptMode] = useState(false);
     const [clientName, setClientName] = useState('');
     const [selectedPlanId, setSelectedPlanId] = useState('');
+    const [selectedFeeIndex, setSelectedFeeIndex] = useState(null);
     const [accepting, setAccepting] = useState(false);
 
     useEffect(() => {
@@ -246,7 +284,12 @@ const PublicProposal = ({ id }) => {
         if(!clientName.trim()) return alert("Por favor, preencha seu nome completo.");
         
         const plans = proposal.data.plans ? proposal.data.plans : (proposal.data.plan ? [proposal.data.plan] : []);
+        const activePlanId = selectedPlanId || plans[0].id;
+        const activePlan = plans.find(p => p.id === activePlanId) || plans[0];
+        const validFees = activePlan.fees ? activePlan.fees.filter(f => f.value.trim() !== '') : [];
+
         if (plans.length > 1 && !selectedPlanId) return alert("Por favor, selecione qual opção de plano deseja contratar acima.");
+        if (validFees.length > 1 && selectedFeeIndex === null) return alert("Por favor, selecione qual o tipo de abertura da sua empresa.");
 
         setAccepting(true);
         fetch(`/api/proposals/${id}/accept`, {
@@ -254,10 +297,12 @@ const PublicProposal = ({ id }) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 name: clientName, 
-                selectedPlanId: selectedPlanId || plans[0].id 
+                selectedPlanId: activePlanId,
+                selectedFeeIndex: selectedFeeIndex,
+                selectedFeeLabel: selectedFeeIndex !== null ? validFees[selectedFeeIndex].label : null
             })
         }).then(r => r.json()).then(() => {
-            window.location.reload();
+            window.location.href = "https://abertura.virgulacontabil.com.br/";
         });
     };
 
@@ -288,7 +333,7 @@ const PublicProposal = ({ id }) => {
                         
                         {plans.length > 1 && (
                             <div className="mb-5 bg-secondary/30 p-5 rounded-xl border border-border">
-                                <label className="text-sm font-bold text-foreground mb-3 block flex items-center gap-2"><CheckCircle size={16} className="text-primary"/> Qual opção você deseja contratar?</label>
+                                <label className="text-sm font-bold text-foreground mb-3 flex items-center gap-2"><CheckCircle size={16} className="text-primary"/> Qual opção você deseja contratar?</label>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                     {plans.map((p, idx) => (
                                         <div 
@@ -303,6 +348,42 @@ const PublicProposal = ({ id }) => {
                                 </div>
                             </div>
                         )}
+
+                        {(() => {
+                            const activePlanId = selectedPlanId || plans[0].id;
+                            const activePlan = plans.find(p => p.id === activePlanId) || plans[0];
+                            const validFees = activePlan.fees ? activePlan.fees.filter(f => f.value.trim() !== '') : [];
+                            
+                            if (validFees.length > 1) {
+                                return (
+                                    <div className="mb-5 bg-secondary/30 p-5 rounded-xl border border-border">
+                                        <label className="text-sm font-bold text-foreground mb-3 flex items-center gap-2"><CheckCircle size={16} className="text-primary"/> Qual o tipo de abertura da sua empresa?</label>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {validFees.map((fee, idx) => {
+                                                const isIndividual = fee.label.toLowerCase().includes('individual');
+                                                const isSociedade = fee.label.toLowerCase().includes('sociedade');
+                                                let desc = '';
+                                                if (isIndividual) desc = 'Ideal para quem vai atuar sozinho, sem sócios.';
+                                                else if (isSociedade) desc = 'Ideal para quem vai abrir o negócio com um ou mais sócios.';
+
+                                                return (
+                                                    <div 
+                                                        key={idx} 
+                                                        onClick={() => setSelectedFeeIndex(idx)}
+                                                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-center text-center ${selectedFeeIndex === idx ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-background hover:border-primary/50'}`}
+                                                    >
+                                                        <p className="font-bold text-[13px] text-primary mb-1 leading-tight">{fee.label}</p>
+                                                        <h3 className="text-lg font-bold text-foreground mb-2">R$ {parseFloat(fee.value).toLocaleString('pt-BR')}</h3>
+                                                        {desc && <p className="text-[11px] text-muted-foreground leading-tight px-2">{desc}</p>}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })()}
 
                         <div className="flex flex-col sm:flex-row gap-3">
                             <input 
@@ -420,7 +501,7 @@ const AdminDashboard = ({ token, setToken }) => {
     
     const plansPayload = selectedPlans.map(p => ({
         ...p,
-        openingFee: builderData.fees[p.id] || ''
+        fees: builderData.fees[p.id] || [{ label: 'Taxa de Abertura', value: '' }]
     }));
 
     const proposalPayload = {
@@ -532,22 +613,58 @@ const AdminDashboard = ({ token, setToken }) => {
                       <div>
                           <label className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3 block">Planos Selecionados e Taxas de Abertura</label>
                           <div className="flex flex-col gap-3">
-                              {selectedPlans.map((p, idx) => (
-                                  <div key={p.id} className="flex items-center gap-4 bg-background p-4 rounded-xl border border-border">
-                                      <div className="flex-1">
-                                          <p className="font-bold text-sm text-foreground">Opção {idx + 1}: {p.name}</p>
-                                          <p className="text-xs text-muted-foreground">R$ {p.price.toLocaleString('pt-BR')}/mês</p>
+                              {selectedPlans.map((p, idx) => {
+                                  const planFees = builderData.fees[p.id] || [{ label: 'Taxa de Abertura', value: '' }];
+                                  return (
+                                      <div key={p.id} className="flex flex-col gap-3 bg-background p-4 rounded-xl border border-border">
+                                          <div className="flex items-center justify-between">
+                                              <div>
+                                                  <p className="font-bold text-sm text-foreground">Opção {idx + 1}: {p.name}</p>
+                                                  <p className="text-xs text-muted-foreground">R$ {p.price.toLocaleString('pt-BR')}/mês</p>
+                                              </div>
+                                              <button onClick={() => {
+                                                  const currentFees = builderData.fees[p.id] || [{ label: 'Taxa de Abertura', value: '' }];
+                                                  setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: [...currentFees, { label: '', value: '' }]}});
+                                              }} className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/10 flex items-center gap-1">
+                                                  <Plus size={12}/> Nova Taxa
+                                              </button>
+                                          </div>
+                                          
+                                          <div className="flex flex-col gap-2 mt-2 border-t border-border/50 pt-3">
+                                              {planFees.map((fee, feeIdx) => (
+                                                  <div key={feeIdx} className="flex items-center gap-2">
+                                                      <input 
+                                                          value={fee.label} 
+                                                          onChange={e => {
+                                                              const newFees = [...planFees];
+                                                              newFees[feeIdx].label = e.target.value;
+                                                              setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
+                                                          }}
+                                                          placeholder="Nome da taxa (ex: Abertura individual)" 
+                                                          className="flex-1 bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none text-foreground" 
+                                                      />
+                                                      <input 
+                                                          value={fee.value} 
+                                                          onChange={e => {
+                                                              const newFees = [...planFees];
+                                                              newFees[feeIdx].value = e.target.value;
+                                                              setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
+                                                          }}
+                                                          placeholder="Valor" 
+                                                          className="w-32 bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none text-foreground" 
+                                                      />
+                                                      <button onClick={() => {
+                                                          const newFees = planFees.filter((_, i) => i !== feeIdx);
+                                                          setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
+                                                      }} className="text-accent hover:text-accent/80 p-2">
+                                                          <Trash2 size={16} />
+                                                      </button>
+                                                  </div>
+                                              ))}
+                                          </div>
                                       </div>
-                                      <div className="w-40">
-                                          <input 
-                                              value={builderData.fees[p.id] || ''} 
-                                              onChange={e => setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: e.target.value}})} 
-                                              placeholder="Taxa (Opcional)" 
-                                              className="w-full bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none text-foreground" 
-                                          />
-                                      </div>
-                                  </div>
-                              ))}
+                                  );
+                              })}
                           </div>
                       </div>
                   </div>
@@ -678,7 +795,12 @@ const AdminDashboard = ({ token, setToken }) => {
                               Aceito por: {p.acceptanceData && p.acceptanceData.name} em {new Date(p.acceptedAt).toLocaleString('pt-BR')}
                               {pPlans.length > 1 && p.acceptanceData && p.acceptanceData.selectedPlanId && (
                                   <span className="block mt-0.5 text-accent font-bold">
-                                      Opção Escolhida: {pPlans.find(pl => pl.id === p.acceptanceData.selectedPlanId)?.name}
+                                      Plano Escolhido: {pPlans.find(pl => pl.id === p.acceptanceData.selectedPlanId)?.name}
+                                  </span>
+                              )}
+                              {p.acceptanceData && p.acceptanceData.selectedFeeLabel && (
+                                  <span className="block mt-0.5 text-accent font-bold">
+                                      Tipo de Abertura: {p.acceptanceData.selectedFeeLabel}
                                   </span>
                               )}
                           </p>
