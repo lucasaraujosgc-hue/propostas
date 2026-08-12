@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 80;
+const PORT = 3000;
 
 // Determina o caminho do banco de dados (prioriza a montagem /backup do Easypanel)
 const backupDir = '/backup';

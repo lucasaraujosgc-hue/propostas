@@ -6,33 +6,81 @@
     <title>Proposta de Contabilidade | Lucas Araújo</title>
     <link rel="icon" type="image/png" href="https://www.virgulacontabil.com.br/wp-content/uploads/2026/01/cropped-favicon-1-1.png">
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'virgula': {
-                            dark: '#0a0a0a',
-                            card: '#171717',
-                            green: '#10b981',
-                            greenHover: '#059669',
-                            muted: '#a3a3a3',
-                            border: 'rgba(255,255,255,0.05)'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Tailwind CSS v4 -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    
     <!-- Babel Standalone -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style type="text/tailwindcss">
+        @theme inline {
+            --radius-md: 0.75rem;
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0a; color: #ffffff; margin: 0; }
+            --color-background: var(--background);
+            --color-foreground: var(--foreground);
+
+            --color-card: var(--card);
+            --color-card-foreground: var(--card-foreground);
+
+            --color-primary: var(--primary);
+            --color-primary-foreground: var(--primary-foreground);
+
+            --color-secondary: var(--secondary);
+            --color-secondary-foreground: var(--secondary-foreground);
+
+            --color-muted: var(--muted);
+            --color-muted-foreground: var(--muted-foreground);
+
+            --color-accent: var(--accent);
+            --color-accent-foreground: var(--accent-foreground);
+
+            --color-border: var(--border);
+            --color-ring: var(--ring);
+
+            --font-serif: "Fraunces", ui-serif, Georgia, serif;
+            --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        }
+
+        :root {
+            --background: oklch(0.982 0.012 90);         /* creme quente quase branco */
+            --foreground: oklch(0.22 0.02 160);           /* verde-escuro acinzentado para texto */
+
+            --card: oklch(0.995 0.006 90);                /* branco-creme para superfícies */
+            --card-foreground: oklch(0.22 0.02 160);
+
+            --primary: oklch(0.36 0.06 165);              /* verde-floresta profundo */
+            --primary-foreground: oklch(0.98 0.012 90);   /* creme para texto sobre primary */
+
+            --secondary: oklch(0.94 0.02 90);             /* bege claro para fundos secundários */
+            --secondary-foreground: oklch(0.28 0.04 165);
+
+            --muted: oklch(0.94 0.015 90);
+            --muted-foreground: oklch(0.48 0.02 160);     /* verde acinzentado médio para textos secundários */
+
+            --accent: oklch(0.72 0.14 55);                /* terracota/âmbar — cor de destaque */
+            --accent-foreground: oklch(0.2 0.03 60);
+
+            --border: oklch(0.88 0.018 90);               /* borda sutil creme-acinzentada */
+            --ring: oklch(0.36 0.06 165);                 /* mesmo que primary para foco */
+        }
+
+        body {
+            font-family: var(--font-sans);
+            font-feature-settings: "ss01", "cv11";
+            background-color: var(--background);
+            color: var(--foreground);
+            margin: 0;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            letter-spacing: -0.02em;
+        }
         
         /* Loading State */
         #root:empty {
@@ -40,7 +88,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            color: #10b981;
+            color: var(--primary);
             font-weight: bold;
         }
         #root:empty::after {
@@ -50,12 +98,11 @@
         @media print {
             @page {
                 size: A4;
-                margin: 10mm; /* Margem padrão para A4 */
+                margin: 10mm;
             }
 
             .no-print { display: none !important; }
             
-            /* RESET CRÍTICO PARA MÚLTIPLAS PÁGINAS */
             html, body { 
                 height: auto !important; 
                 overflow: visible !important; 
@@ -65,7 +112,7 @@
                 margin: 0 !important; 
                 -webkit-print-color-adjust: exact; 
                 print-color-adjust: exact; 
-                font-size: 11pt; /* Fonte base aumentada */
+                font-size: 11pt;
             }
             
             #root { 
@@ -73,11 +120,6 @@
                 display: block !important; 
                 overflow: visible !important;
             }
-            
-            /* Reset de cores para impressão */
-            .bg-virgula-dark { background: white !important; }
-            .bg-virgula-green { background-color: #10b981 !important; color: white !important; }
-            .text-virgula-green { color: #10b981 !important; }
             
             .proposal-container { 
                 border: none !important; 
@@ -91,7 +133,6 @@
             .page-break { page-break-before: always; }
             .page-break-avoid { page-break-inside: avoid !important; }
 
-            /* LAYOUT DE 3 COLUNAS PARA IMPRESSÃO (IGUAL IMAGEM) */
             .print-grid-3 {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
@@ -102,7 +143,6 @@
                 margin-bottom: 0 !important;
             }
             
-            /* Ocultar scrollbars */
             textarea { resize: none; overflow: hidden; border: none !important; }
         }
     </style>
