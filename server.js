@@ -12,14 +12,25 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
 const localDb = path.join(__dirname, 'database.sqlite');
-const volumeDb = '/backup/database.sqlite';
-let dbPath = localDb;
+let dbDir = path.join(__dirname, 'backup');
 
 if (fs.existsSync('/backup')) {
-    dbPath = volumeDb;
-    if (!fs.existsSync(volumeDb) && fs.existsSync(localDb)) {
-        fs.copyFileSync(localDb, volumeDb);
-    }
+    dbDir = '/backup';
+} else if (fs.existsSync('/app/backup')) {
+    dbDir = '/app/backup';
+} else if (fs.existsSync('/data')) {
+    dbDir = '/data';
+}
+
+if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+}
+
+let dbPath = path.join(dbDir, 'database.sqlite');
+
+// Migrate old local db if it exists and the new one doesn't
+if (fs.existsSync(localDb) && !fs.existsSync(dbPath)) {
+    fs.copyFileSync(localDb, dbPath);
 }
 
 const db = new sqlite3.Database(dbPath);
@@ -27,9 +38,7 @@ const db = new sqlite3.Database(dbPath);
 function saveBackupJSON() {
     db.all("SELECT * FROM proposals", (err, rows) => {
         if (!err && rows) {
-            const bDir = fs.existsSync('/backup') ? '/backup' : path.join(__dirname, 'backup');
-            if (!fs.existsSync(bDir)) fs.mkdirSync(bDir, { recursive: true });
-            fs.writeFileSync(path.join(bDir, 'proposals.json'), JSON.stringify(rows, null, 2));
+            fs.writeFileSync(path.join(dbDir, 'proposals.json'), JSON.stringify(rows, null, 2));
         }
     });
 }

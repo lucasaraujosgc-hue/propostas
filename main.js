@@ -23,6 +23,27 @@ const DEFAULT_DATA = {
           id: 's3', name: 'Intermediário 2', subtitle: 'Simples + 5 Func.', price: 519, isPopular: true,
           features: [{ text: 'Tudo do Intermediário', included: true }, { text: 'DP p/ até 5 Funcionários', included: true }, { text: 'Folha, Férias e 13º', included: true }, { text: 'Lucro Presumido', included: false }],
           detailedServices: [{ category: 'FISCAIS / TRIBUTÁRIOS', items: ['Todos itens do Intermediário', 'Apuração mensal DAS', 'PGDAS-D', 'Consultoria tributária'] }, { category: 'DEPARTAMENTO PESSOAL', items: ['Registro/admissão empregados', 'Elaboração folha pagamento', 'Cálculo pró-labore', 'Encargos Trabalhistas', 'Rescisões', 'Férias e 13º', 'eSocial, Reinf, DCTFWeb'] }, { category: 'CONTÁBEIS', items: ['Todos itens do Intermediário', 'Análise de indicadores'] }]
+        },
+        {
+          id: 's4', name: 'Avançado', subtitle: 'Lucro Presumido / Real', price: 950, isPopular: false,
+          features: [{ text: 'Tudo do Intermediário 2', included: true }, { text: 'Lucro Presumido', included: true }, { text: 'SPED Fiscal/Contábil', included: true }, { text: 'Planejamento Tributário', included: true }],
+          detailedServices: [{ category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração PIS/COFINS/CSLL/IRPJ', 'SPED Fiscal (ICMS/IPI)', 'EFD Contribuições', 'Planejamento Tributário Anual', 'Acompanhamento CND'] }, { category: 'DEPARTAMENTO PESSOAL', items: ['Todos os itens anteriores', 'Gestão avançada de benefícios'] }, { category: 'CONTÁBEIS', items: ['ECD - Escrituração Contábil Digital', 'ECF - Escrituração Contábil Fiscal', 'Demonstrações Financeiras Completas', 'Análise de Balanço'] }]
+        }
+      ]
+    },
+    {
+      id: 'Comércio',
+      label: 'Comércio',
+      plans: [
+        {
+          id: 'c1', name: 'Comércio Inicial', subtitle: 'Simples Nacional', price: 350, isPopular: false,
+          features: [{ text: 'Apuração Simples Nacional', included: true }, { text: 'Controle de Estoque/ICMS', included: true }, { text: 'Emissão NF-e/NFC-e', included: true }, { text: 'Folha Funcionários', included: false }],
+          detailedServices: [{ category: 'FISCAIS / TRIBUTÁRIOS', items: ['Apuração mensal DAS', 'Declarações Estaduais (ICMS)', 'Orientação emissão NF-e e NFC-e', 'Sintegra/SPED'] }, { category: 'DEPARTAMENTO PESSOAL', items: ['Pró-labore sócios'] }, { category: 'CONTÁBEIS', items: ['Escrituração contábil', 'Balanço e DRE mensais'] }]
+        },
+        {
+          id: 'c2', name: 'Comércio Plus', subtitle: 'Simples + 5 Func.', price: 650, isPopular: true,
+          features: [{ text: 'Tudo do Comércio Inicial', included: true }, { text: 'Folha até 5 Funcionários', included: true }, { text: 'Gestão de Férias', included: true }, { text: 'Consultoria ICMS/ST', included: true }],
+          detailedServices: [{ category: 'FISCAIS / TRIBUTÁRIOS', items: ['Todos do Comércio Inicial', 'Análise ICMS Substituição Tributária', 'Consultoria Fiscal'] }, { category: 'DEPARTAMENTO PESSOAL', items: ['Registro empregados', 'Folha, 13º e Férias', 'eSocial'] }, { category: 'CONTÁBEIS', items: ['Todos os itens anteriores', 'Análise Financeira Básica'] }]
         }
       ]
     }
