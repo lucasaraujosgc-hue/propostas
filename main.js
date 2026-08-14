@@ -114,6 +114,14 @@ const ProposalDocument = ({ proposal, officeData }) => {
                                  </li>
                              ))}
                          </ul>
+
+                         {(p.fees && p.fees.filter(fee => fee.value.trim() !== '').length > 0) || (p.openingFee && p.openingFee.trim() !== '') ? (
+                             <div className="mt-6 text-[10px] text-muted-foreground leading-relaxed border-t border-primary/10 pt-4">
+                                 <p className="mb-2"><strong>Empresa Individual (Empresário Individual)</strong> é uma modalidade em que o negócio é constituído por uma única pessoa, sem sócios. O empresário é o responsável pela empresa e, em regra, não há separação patrimonial plena entre os bens da pessoa física e da empresa.</p>
+                                 <p className="mb-2"><strong>Sociedade Limitada (LTDA.)</strong> pode ser constituída por um ou mais sócios e possui personalidade jurídica própria. A responsabilidade dos sócios é, em regra, limitada ao valor de suas quotas, proporcionando maior separação entre o patrimônio pessoal e o patrimônio da empresa.</p>
+                                 <p><strong>Principal diferença:</strong> o Empresário Individual não possui a mesma proteção patrimonial da Sociedade Limitada. Na LTDA., existe uma separação patrimonial mais clara entre a empresa e seus sócios, além da possibilidade de participação de dois ou mais sócios.</p>
+                             </div>
+                         ) : null}
                      </div>
                      
                      <div className="flex flex-col w-full sm:w-56">
@@ -302,7 +310,11 @@ const PublicProposal = ({ id }) => {
                 selectedFeeLabel: selectedFeeIndex !== null ? validFees[selectedFeeIndex].label : null
             })
         }).then(r => r.json()).then(() => {
-            window.location.href = "https://abertura.virgulacontabil.com.br/";
+            if (validFees.length > 0 || (activePlan.openingFee && activePlan.openingFee.trim() !== '')) {
+                window.location.href = "https://abertura.virgulacontabil.com.br/";
+            } else {
+                window.location.reload();
+            }
         });
     };
 

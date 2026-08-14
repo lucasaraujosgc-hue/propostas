@@ -2,6 +2,7 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,8 +11,28 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'virgula2026';
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-const dbPath = path.join(__dirname, 'database.sqlite');
+const localDb = path.join(__dirname, 'database.sqlite');
+const volumeDb = '/backup/database.sqlite';
+let dbPath = localDb;
+
+if (fs.existsSync('/backup')) {
+    dbPath = volumeDb;
+    if (!fs.existsSync(volumeDb) && fs.existsSync(localDb)) {
+        fs.copyFileSync(localDb, volumeDb);
+    }
+}
+
 const db = new sqlite3.Database(dbPath);
+
+function saveBackupJSON() {
+    db.all("SELECT * FROM proposals", (err, rows) => {
+        if (!err && rows) {
+            const bDir = fs.existsSync('/backup') ? '/backup' : path.join(__dirname, 'backup');
+            if (!fs.existsSync(bDir)) fs.mkdirSync(bDir, { recursive: true });
+            fs.writeFileSync(path.join(bDir, 'proposals.json'), JSON.stringify(rows, null, 2));
+        }
+    });
+}
 
 db.serialize(() => {
     db.run("CREATE TABLE IF NOT EXISTS app_state (id INTEGER PRIMARY KEY, key TEXT UNIQUE, data TEXT)");
@@ -64,6 +85,7 @@ app.post('/api/proposals', authMiddleware, (req, res) => {
         [id, JSON.stringify(proposalData), 'Enviada', new Date().toISOString(), expiresAt], 
         function(err) {
             if (err) return res.status(500).send(err.message);
+            saveBackupJSON();
             res.json({ success: true, id: id });
         }
     );
@@ -113,6 +135,7 @@ app.post('/api/proposals/:id/view', (req, res) => {
         [new Date().toISOString(), req.params.id], 
         function(err) {
             if (err) return res.status(500).send(err.message);
+            saveBackupJSON();
             res.json({ success: true });
         }
     );
@@ -125,6 +148,7 @@ app.post('/api/proposals/:id/accept', (req, res) => {
         [new Date().toISOString(), acceptanceData, req.params.id], 
         function(err) {
             if (err) return res.status(500).send(err.message);
+            saveBackupJSON();
             res.json({ success: true });
         }
     );
