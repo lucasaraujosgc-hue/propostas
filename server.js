@@ -100,6 +100,25 @@ app.post('/api/proposals', authMiddleware, (req, res) => {
     );
 });
 
+// Atualizar proposta existente (Protegido)
+app.put('/api/proposals/:id', authMiddleware, (req, res) => {
+    const proposalData = req.body.data;
+    db.run("UPDATE proposals SET data = ? WHERE id = ?", [JSON.stringify(proposalData), req.params.id], function(err) {
+        if (err) return res.status(500).send(err.message);
+        saveBackupJSON();
+        res.json({ success: true });
+    });
+});
+
+// Excluir proposta (Protegido)
+app.delete('/api/proposals/:id', authMiddleware, (req, res) => {
+    db.run("DELETE FROM proposals WHERE id = ?", [req.params.id], function(err) {
+        if (err) return res.status(500).send(err.message);
+        saveBackupJSON();
+        res.json({ success: true });
+    });
+});
+
 // Listar todas as propostas (Protegido)
 app.get('/api/proposals', authMiddleware, (req, res) => {
     db.all("SELECT * FROM proposals ORDER BY created_at DESC", (err, rows) => {

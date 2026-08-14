@@ -454,6 +454,7 @@ const AdminDashboard = ({ token, setToken }) => {
   const [selectedPlans, setSelectedPlans] = useState([]);
   const [showBuilder, setShowBuilder] = useState(false);
   const [builderData, setBuilderData] = useState({ clientName: '', fees: {} });
+  const [editingProposalId, setEditingProposalId] = useState(null);
   
   const [proposals, setProposals] = useState([]);
   const [previewProposal, setPreviewProposal] = useState(null);
@@ -543,8 +544,11 @@ const AdminDashboard = ({ token, setToken }) => {
         intro: intro
     };
 
-    fetch('/api/proposals', {
-        method: 'POST',
+    const url = editingProposalId ? `/api/proposals/${editingProposalId}` : '/api/proposals';
+    const method = editingProposalId ? 'PUT' : 'POST';
+
+    fetch(url, {
+        method: method,
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ data: proposalPayload })
     }).then(r => {
@@ -557,15 +561,40 @@ const AdminDashboard = ({ token, setToken }) => {
         setSelectedPlans([]);
         setBuilderData({ clientName: '', fees: {} });
         
-        const newlyCreated = {
-            id: res.id,
-            status: 'Enviada',
-            createdAt: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-            data: proposalPayload
-        };
-        setPreviewProposal(newlyCreated);
+        if (!editingProposalId) {
+            const newlyCreated = {
+                id: res.id,
+                status: 'Enviada',
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                data: proposalPayload
+            };
+            setPreviewProposal(newlyCreated);
+        } else {
+            setPreviewProposal(null);
+            setEditingProposalId(null);
+        }
     }).catch(e => console.error(e));
+  };
+
+  const handleEditProposal = (p) => {
+      setEditingProposalId(p.id);
+      setBuilderData({
+          clientName: p.data.clientName,
+          fees: p.data.plans ? p.data.plans.reduce((acc, plan) => {
+              acc[plan.id] = plan.fees || [{ label: 'Taxa de Abertura', value: '' }];
+              return acc;
+          }, {}) : {}
+      });
+      setSelectedPlans(p.data.plans ? p.data.plans : (p.data.plan ? [p.data.plan] : []));
+      setShowBuilder(true);
+  };
+
+  const handleDeleteProposal = (id) => {
+      if (!confirm('Tem certeza que deseja excluir esta proposta?')) return;
+      fetch(`/api/proposals/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } })
+          .then(r => r.json())
+          .then(() => fetchProposals());
   };
 
   if (loading) return <div className="p-20 text-center text-primary font-bold">Iniciando Sistema...</div>;
@@ -630,8 +659,8 @@ const AdminDashboard = ({ token, setToken }) => {
           <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in">
               <div className="bg-card border border-border w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
                   <div className="p-6 border-b border-border flex justify-between items-center bg-secondary/30">
-                      <h3 className="text-xl font-bold text-primary font-serif">Configurar Nova Proposta</h3>
-                      <button onClick={() => setShowBuilder(false)} className="text-muted-foreground hover:text-foreground"><X size={20}/></button>
+                      <h3 className="text-xl font-bold text-primary font-serif">{editingProposalId ? 'Editar Proposta' : 'Configurar Nova Proposta'}</h3>
+                      <button onClick={() => {setShowBuilder(false); setEditingProposalId(null);}} className="text-muted-foreground hover:text-foreground"><X size={20}/></button>
                   </div>
                   <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
                       <div>
@@ -702,9 +731,9 @@ const AdminDashboard = ({ token, setToken }) => {
                       </div>
                   </div>
                   <div className="p-6 border-t border-border bg-secondary/30 flex justify-end gap-3">
-                      <button onClick={() => setShowBuilder(false)} className="px-6 py-2.5 bg-background border border-border text-foreground font-semibold rounded-xl hover:bg-secondary transition-colors">Cancelar</button>
+                      <button onClick={() => {setShowBuilder(false); setEditingProposalId(null);}} className="px-6 py-2.5 bg-background border border-border text-foreground font-semibold rounded-xl hover:bg-secondary transition-colors">Cancelar</button>
                       <button onClick={handleContract} className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 flex items-center gap-2 transition-opacity">
-                          <Send size={16}/> Gerar Link da Proposta
+                          <Send size={16}/> {editingProposalId ? 'Atualizar Proposta' : 'Gerar Link da Proposta'}
                       </button>
                   </div>
               </div>
@@ -845,6 +874,12 @@ const AdminDashboard = ({ token, setToken }) => {
                       </button>
                       <button onClick={() => {navigator.clipboard.writeText(getProposalLink(p.id)); alert('Link copiado!');}} className="px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-[10px] font-bold uppercase hover:bg-secondary/80 transition-all flex items-center gap-1">
                           <Copy size={14}/> Copiar Link
+                      </button>
+                      <button onClick={() => handleEditProposal(p)} className="px-4 py-2 bg-secondary/50 text-foreground border border-border rounded-xl text-[10px] font-bold uppercase hover:bg-secondary transition-all flex items-center gap-1">
+                          <Edit3 size={14}/> Editar
+                      </button>
+                      <button onClick={() => handleDeleteProposal(p.id)} className="px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-xl text-[10px] font-bold uppercase hover:bg-red-500/20 transition-all flex items-center gap-1">
+                          <Trash2 size={14}/> Excluir
                       </button>
                     </div>
                   </div>
