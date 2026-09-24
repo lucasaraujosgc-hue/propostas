@@ -45,7 +45,28 @@ function saveBackupJSON() {
 
 db.serialize(() => {
     db.run("CREATE TABLE IF NOT EXISTS app_state (id INTEGER PRIMARY KEY, key TEXT UNIQUE, data TEXT)");
-    db.run("CREATE TABLE IF NOT EXISTS proposals (id TEXT PRIMARY KEY, data TEXT, status TEXT, created_at DATETIME, expires_at DATETIME, viewed_at DATETIME, accepted_at DATETIME, acceptance_data TEXT)");
+    db.run("CREATE TABLE IF NOT EXISTS proposals (id TEXT PRIMARY KEY, data TEXT, status TEXT, created_at DATETIME, expires_at DATETIME, viewed_at DATETIME, accepted_at DATETIME, acceptance_data TEXT)", () => {
+        const jsonBackup = path.join(dbDir, 'proposals.json');
+        if (fs.existsSync(jsonBackup)) {
+            db.get("SELECT COUNT(*) as count FROM proposals", (err, row) => {
+                if (!err && row && row.count === 0) {
+                    try {
+                        const savedRows = JSON.parse(fs.readFileSync(jsonBackup, 'utf-8'));
+                        if (Array.isArray(savedRows) && savedRows.length > 0) {
+                            const stmt = db.prepare("INSERT OR REPLACE INTO proposals (id, data, status, created_at, expires_at, viewed_at, accepted_at, acceptance_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                            savedRows.forEach(r => {
+                                stmt.run(r.id, r.data, r.status, r.created_at, r.expires_at, r.viewed_at, r.accepted_at, r.acceptance_data);
+                            });
+                            stmt.finalize();
+                            console.log(`Restauradas ${savedRows.length} propostas do backup JSON.`);
+                        }
+                    } catch (e) {
+                        console.error('Erro ao restaurar backup JSON de propostas:', e);
+                    }
+                }
+            });
+        }
+    });
 });
 
 // Middleware de Autenticação

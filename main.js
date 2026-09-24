@@ -79,6 +79,29 @@ const downloadPDF = (elementId, filename) => {
     }, 100);
 };
 
+const parseMoneyValue = (val) => {
+    if (val === null || val === undefined || val === '') return 0;
+    if (typeof val === 'number') return isNaN(val) ? 0 : val;
+    let str = String(val).trim().replace(/^[^\d,-]+/, '').trim();
+    if (!str) return 0;
+    if (str.includes('.') && str.includes(',')) {
+        str = str.replace(/\./g, '').replace(',', '.');
+    } else if (str.includes(',')) {
+        str = str.replace(',', '.');
+    }
+    const num = parseFloat(str);
+    return isNaN(num) ? 0 : num;
+};
+
+const formatMoneyDisplay = (val) => {
+    if (val === null || val === undefined || val === '') return '';
+    const num = parseMoneyValue(val);
+    if (isNaN(num)) return String(val);
+    return num % 1 === 0 
+        ? `R$ ${num.toLocaleString('pt-BR')}` 
+        : `R$ ${num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
 const renderBoldText = (text) => {
     if (!text) return null;
     const parts = text.split(/(\*\*.*?\*\*)/g);
@@ -92,7 +115,7 @@ const renderBoldText = (text) => {
 
 const ProposalDocument = ({ proposal, officeData }) => {
     const data = proposal.data;
-    const plans = data.plans ? data.plans : (data.plan ? [{ ...data.plan, openingFee: data.openingFee }] : []);
+    const plans = data.plans ? data.plans : (data.plan ? [{ ...data.plan, openingFee: data.openingFee, costs: data.costs }] : []);
     const dateStr = new Date(proposal.createdAt).toLocaleDateString('pt-BR');
     const validUntilStr = new Date(proposal.expiresAt).toLocaleDateString('pt-BR');
     const isExpired = new Date() > new Date(proposal.expiresAt);
@@ -121,7 +144,15 @@ const ProposalDocument = ({ proposal, officeData }) => {
           </div>
 
           <div className="flex flex-col gap-6 mb-10 page-break-avoid">
-             {plans.map((p, idx) => (
+             {plans.map((p, idx) => {
+                 const validFees = p.fees ? p.fees.filter(fee => fee.value && String(fee.value).trim() !== '') : [];
+                 const validCosts = p.costs ? p.costs.filter(cost => cost.value && String(cost.value).trim() !== '') : [];
+                 const hasOpeningFee = p.openingFee && String(p.openingFee).trim() !== '';
+                 const totalCosts = validCosts.reduce((sum, c) => sum + parseMoneyValue(c.value), 0);
+                 const hasAnyFees = validFees.length > 0 || hasOpeningFee;
+                 const hasAnyCosts = validCosts.length > 0;
+
+                 return (
                  <div key={idx} className="flex flex-col sm:flex-row bg-background border-2 border-primary/20 rounded-xl overflow-hidden shadow-sm">
                      <div className="flex-1 p-5 sm:p-6 border-b sm:border-b-0 sm:border-r border-primary/20 bg-primary/5">
                          {plans.length > 1 && <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-primary mb-1">Opção {idx + 1}</p>}
@@ -136,7 +167,7 @@ const ProposalDocument = ({ proposal, officeData }) => {
                              ))}
                          </ul>
 
-                         {(p.fees && p.fees.filter(fee => fee.value.trim() !== '').length > 0) || (p.openingFee && p.openingFee.trim() !== '') ? (
+                         {(validFees.length > 0 || hasOpeningFee) ? (
                              <div className="mt-6 text-[10px] text-muted-foreground leading-relaxed border-t border-primary/10 pt-4">
                                  <p className="mb-2"><strong>Empresa Individual (Empresário Individual)</strong> é uma modalidade em que o negócio é constituído por uma única pessoa, sem sócios. O empresário é o responsável pela empresa e, em regra, não há separação patrimonial plena entre os bens da pessoa física e da empresa.</p>
                                  <p className="mb-2"><strong>Sociedade Limitada (LTDA.)</strong> pode ser constituída por um ou mais sócios e possui personalidade jurídica própria. A responsabilidade dos sócios é, em regra, limitada ao valor de suas quotas, proporcionando maior separação entre o patrimônio pessoal e o patrimônio da empresa.</p>
@@ -145,20 +176,21 @@ const ProposalDocument = ({ proposal, officeData }) => {
                          ) : null}
                      </div>
                      
-                     <div className="flex flex-col w-full sm:w-56">
-                         {p.fees && p.fees.filter(fee => fee.value.trim() !== '').length > 0 ? (
+                     <div className="flex flex-col w-full sm:w-64 border-t sm:border-t-0 sm:border-l border-primary/20">
+                         {/* TAXAS DE ABERTURA - com 'OU' */}
+                         {validFees.length > 0 ? (
                              <div className="flex flex-col border-b border-primary/20 bg-card relative">
                                  <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground text-center pt-3 pb-1">Taxas de Abertura</div>
-                                 {p.fees.filter(fee => fee.value.trim() !== '').map((fee, feeIdx, arr) => (
+                                 {validFees.map((fee, feeIdx, arr) => (
                                      <React.Fragment key={feeIdx}>
-                                         <div className="p-3 flex flex-col justify-center text-center">
+                                         <div className="p-2.5 flex flex-col justify-center text-center">
                                              <p className="text-[10px] font-semibold text-foreground mb-0.5 leading-tight">{fee.label || 'Taxa'}</p>
-                                             <h3 className="text-[17px] font-bold text-primary">
-                                                 {isNaN(fee.value) ? fee.value : `R$ ${parseFloat(fee.value).toLocaleString('pt-BR')}`}
+                                             <h3 className="text-[16px] font-bold text-primary">
+                                                 {formatMoneyDisplay(fee.value)}
                                              </h3>
                                          </div>
                                          {feeIdx < arr.length - 1 && (
-                                             <div className="flex items-center justify-center my-0.5">
+                                             <div className="flex items-center justify-center my-0.5 px-4">
                                                  <div className="h-px bg-border flex-1"></div>
                                                  <span className="text-[9px] font-bold text-muted-foreground px-2 bg-card">OU</span>
                                                  <div className="h-px bg-border flex-1"></div>
@@ -167,21 +199,103 @@ const ProposalDocument = ({ proposal, officeData }) => {
                                      </React.Fragment>
                                  ))}
                              </div>
-                         ) : p.openingFee ? (
-                             <div className="p-4 border-b border-primary/20 flex flex-col justify-center text-center bg-card">
+                         ) : hasOpeningFee ? (
+                             <div className="p-3 border-b border-primary/20 flex flex-col justify-center text-center bg-card">
                                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-1">Setup / Abertura</p>
-                                 <h3 className="text-lg font-bold text-foreground">
-                                     {isNaN(p.openingFee) ? p.openingFee : `R$ ${parseFloat(p.openingFee).toLocaleString('pt-BR')}`}
+                                 <h3 className="text-base font-bold text-foreground">
+                                     {formatMoneyDisplay(p.openingFee)}
                                  </h3>
                              </div>
                          ) : null}
+
+                         {/* CUSTOS INICIAIS - com 'E' */}
+                         {hasAnyCosts && (
+                             <div className="flex flex-col border-b border-primary/20 bg-card relative">
+                                 <div className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground text-center pt-3 pb-1">Custos Iniciais</div>
+                                 {validCosts.map((cost, costIdx, arr) => (
+                                     <React.Fragment key={costIdx}>
+                                         <div className="p-2.5 flex flex-col justify-center text-center">
+                                             <p className="text-[10px] font-semibold text-foreground mb-0.5 leading-tight">{cost.label || 'Custo'}</p>
+                                             <h3 className="text-[16px] font-bold text-foreground">
+                                                 {formatMoneyDisplay(cost.value)}
+                                             </h3>
+                                         </div>
+                                         {costIdx < arr.length - 1 && (
+                                             <div className="flex items-center justify-center my-0.5 px-4">
+                                                 <div className="h-px bg-border flex-1"></div>
+                                                 <span className="text-[9px] font-bold text-primary px-2 bg-card">E</span>
+                                                 <div className="h-px bg-border flex-1"></div>
+                                             </div>
+                                         )}
+                                     </React.Fragment>
+                                 ))}
+                             </div>
+                         )}
+
+                         {/* CUSTO TOTAL INICIAL - somatório de taxa + custos */}
+                         {hasAnyCosts && (
+                             <div className="p-3 border-b border-primary/20 flex flex-col justify-center text-center bg-secondary/40">
+                                 <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-primary mb-1">Custo Total Inicial</p>
+                                 {validFees.length > 1 ? (
+                                     <div className="flex flex-col gap-1.5 py-0.5">
+                                         {(() => {
+                                             const feeTotals = validFees.map(fee => ({
+                                                 label: fee.label || 'Opção',
+                                                 total: parseMoneyValue(fee.value) + totalCosts
+                                             }));
+                                             const allEqual = feeTotals.every(item => item.total === feeTotals[0].total);
+                                             if (allEqual) {
+                                                 return (
+                                                     <div className="text-center">
+                                                         <h3 className="text-xl font-bold font-serif text-primary">
+                                                             {formatMoneyDisplay(feeTotals[0].total)}
+                                                         </h3>
+                                                         <span className="text-[9px] text-muted-foreground block mt-0.5">(Taxa + Custos Iniciais)</span>
+                                                     </div>
+                                                 );
+                                             }
+                                             return feeTotals.map((item, fIdx, arr) => (
+                                                 <React.Fragment key={fIdx}>
+                                                     <div className="text-center">
+                                                         <span className="text-[9px] font-semibold text-muted-foreground block">{item.label}</span>
+                                                         <span className="text-[15px] font-bold text-primary">{formatMoneyDisplay(item.total)}</span>
+                                                     </div>
+                                                     {fIdx < arr.length - 1 && (
+                                                         <div className="flex items-center justify-center my-0.5 px-4">
+                                                             <div className="h-px bg-border/70 flex-1"></div>
+                                                             <span className="text-[8px] font-bold text-muted-foreground px-1.5">OU</span>
+                                                             <div className="h-px bg-border/70 flex-1"></div>
+                                                         </div>
+                                                     )}
+                                                 </React.Fragment>
+                                             ));
+                                         })()}
+                                     </div>
+                                 ) : (
+                                     <div>
+                                         <h3 className="text-xl font-bold font-serif text-primary">
+                                             {formatMoneyDisplay(
+                                                 (validFees.length === 1 
+                                                     ? parseMoneyValue(validFees[0].value) 
+                                                     : (hasOpeningFee ? parseMoneyValue(p.openingFee) : 0)) + totalCosts
+                                             )}
+                                         </h3>
+                                         {hasAnyFees && hasAnyCosts && (
+                                             <span className="text-[9px] text-muted-foreground block mt-0.5">(Taxa + Custos Iniciais)</span>
+                                         )}
+                                     </div>
+                                 )}
+                             </div>
+                         )}
+
                          <div className="p-5 flex-1 flex flex-col justify-center text-center bg-primary text-primary-foreground">
                              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] opacity-80 mb-1">Honorários Mensais</p>
                              <h3 className="text-3xl font-bold font-serif whitespace-nowrap">R$ {p.price.toLocaleString('pt-BR')}</h3>
                          </div>
                      </div>
                  </div>
-             ))}
+                 );
+             })}
           </div>
 
           {plans.map((p, idx) => (
@@ -272,6 +386,11 @@ const ProposalDocument = ({ proposal, officeData }) => {
                           <strong>Tipo de Abertura:</strong> {proposal.acceptanceData.selectedFeeLabel}
                       </p>
                   )}
+                  {proposal.acceptanceData.totalInitialCost && (
+                      <p className="text-sm text-primary font-bold mt-1">
+                          <strong>Custo Total Inicial:</strong> R$ {proposal.acceptanceData.totalInitialCost.toLocaleString('pt-BR')}
+                      </p>
+                  )}
                   <p className="text-xs text-primary mt-3">ID do Aceite: {proposal.id}</p>
               </div>
           )}
@@ -315,10 +434,15 @@ const PublicProposal = ({ id }) => {
         const plans = proposal.data.plans ? proposal.data.plans : (proposal.data.plan ? [proposal.data.plan] : []);
         const activePlanId = selectedPlanId || plans[0].id;
         const activePlan = plans.find(p => p.id === activePlanId) || plans[0];
-        const validFees = activePlan.fees ? activePlan.fees.filter(f => f.value.trim() !== '') : [];
+        const validFees = activePlan.fees ? activePlan.fees.filter(f => f.value && f.value.trim() !== '') : [];
+        const validCosts = activePlan.costs ? activePlan.costs.filter(c => c.value && c.value.trim() !== '') : [];
+        const totalCosts = validCosts.reduce((sum, c) => sum + parseMoneyValue(c.value), 0);
 
         if (plans.length > 1 && !selectedPlanId) return alert("Por favor, selecione qual opção de plano deseja contratar acima.");
         if (validFees.length > 1 && selectedFeeIndex === null) return alert("Por favor, selecione qual o tipo de abertura da sua empresa.");
+
+        const selectedFeeVal = selectedFeeIndex !== null && validFees[selectedFeeIndex] ? parseMoneyValue(validFees[selectedFeeIndex].value) : (validFees.length === 1 ? parseMoneyValue(validFees[0].value) : 0);
+        const totalInitial = selectedFeeVal + totalCosts;
 
         setAccepting(true);
         fetch(`/api/proposals/${id}/accept`, {
@@ -328,10 +452,11 @@ const PublicProposal = ({ id }) => {
                 name: clientName, 
                 selectedPlanId: activePlanId,
                 selectedFeeIndex: selectedFeeIndex,
-                selectedFeeLabel: selectedFeeIndex !== null ? validFees[selectedFeeIndex].label : null
+                selectedFeeLabel: selectedFeeIndex !== null ? validFees[selectedFeeIndex].label : (validFees.length === 1 ? validFees[0].label : null),
+                totalInitialCost: totalInitial > 0 ? totalInitial : null
             })
         }).then(r => r.json()).then(() => {
-            if (validFees.length > 0 || (activePlan.openingFee && activePlan.openingFee.trim() !== '')) {
+            if (validFees.length > 0 || validCosts.length > 0 || (activePlan.openingFee && activePlan.openingFee.trim() !== '')) {
                 window.location.href = "https://abertura.virgulacontabil.com.br/";
             } else {
                 window.location.reload();
@@ -385,37 +510,66 @@ const PublicProposal = ({ id }) => {
                         {(() => {
                             const activePlanId = selectedPlanId || plans[0].id;
                             const activePlan = plans.find(p => p.id === activePlanId) || plans[0];
-                            const validFees = activePlan.fees ? activePlan.fees.filter(f => f.value.trim() !== '') : [];
+                            const validFees = activePlan.fees ? activePlan.fees.filter(f => f.value && f.value.trim() !== '') : [];
+                            const validCosts = activePlan.costs ? activePlan.costs.filter(c => c.value && c.value.trim() !== '') : [];
+                            const totalCosts = validCosts.reduce((sum, c) => sum + parseMoneyValue(c.value), 0);
                             
-                            if (validFees.length > 1) {
-                                return (
-                                    <div className="mb-5 bg-secondary/30 p-5 rounded-xl border border-border">
-                                        <label className="text-sm font-bold text-foreground mb-3 flex items-center gap-2"><CheckCircle size={16} className="text-primary"/> Qual o tipo de abertura da sua empresa?</label>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {validFees.map((fee, idx) => {
-                                                const isIndividual = fee.label.toLowerCase().includes('individual');
-                                                const isSociedade = fee.label.toLowerCase().includes('sociedade');
-                                                let desc = '';
-                                                if (isIndividual) desc = 'Ideal para quem vai atuar sozinho, sem sócios.';
-                                                else if (isSociedade) desc = 'Ideal para quem vai abrir o negócio com um ou mais sócios.';
+                            return (
+                                <div className="flex flex-col gap-4 mb-5">
+                                    {validFees.length > 1 && (
+                                        <div className="bg-secondary/30 p-5 rounded-xl border border-border">
+                                            <label className="text-sm font-bold text-foreground mb-3 flex items-center gap-2"><CheckCircle size={16} className="text-primary"/> Qual o tipo de abertura da sua empresa?</label>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                {validFees.map((fee, idx) => {
+                                                    const isIndividual = fee.label.toLowerCase().includes('individual');
+                                                    const isSociedade = fee.label.toLowerCase().includes('sociedade');
+                                                    let desc = '';
+                                                    if (isIndividual) desc = 'Ideal para quem vai atuar sozinho, sem sócios.';
+                                                    else if (isSociedade) desc = 'Ideal para quem vai abrir o negócio com um ou mais sócios.';
 
-                                                return (
-                                                    <div 
-                                                        key={idx} 
-                                                        onClick={() => setSelectedFeeIndex(idx)}
-                                                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-center text-center ${selectedFeeIndex === idx ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-background hover:border-primary/50'}`}
-                                                    >
-                                                        <p className="font-bold text-[13px] text-primary mb-1 leading-tight">{fee.label}</p>
-                                                        <h3 className="text-lg font-bold text-foreground mb-2">R$ {parseFloat(fee.value).toLocaleString('pt-BR')}</h3>
-                                                        {desc && <p className="text-[11px] text-muted-foreground leading-tight px-2">{desc}</p>}
-                                                    </div>
-                                                );
-                                            })}
+                                                    const feeNum = parseMoneyValue(fee.value);
+                                                    const totalWithCosts = feeNum + totalCosts;
+
+                                                    return (
+                                                        <div 
+                                                            key={idx} 
+                                                            onClick={() => setSelectedFeeIndex(idx)}
+                                                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex flex-col justify-center text-center ${selectedFeeIndex === idx ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-background hover:border-primary/50'}`}
+                                                        >
+                                                            <p className="font-bold text-[13px] text-primary mb-1 leading-tight">{fee.label}</p>
+                                                            <h3 className="text-lg font-bold text-foreground mb-1">R$ {feeNum.toLocaleString('pt-BR')}</h3>
+                                                            {totalCosts > 0 && (
+                                                                <p className="text-[11px] font-bold text-primary mb-1 bg-primary/10 py-1 px-2 rounded-lg">
+                                                                    Custo Total Inicial: R$ {totalWithCosts.toLocaleString('pt-BR')}
+                                                                </p>
+                                                            )}
+                                                            {desc && <p className="text-[11px] text-muted-foreground leading-tight px-2 mt-1">{desc}</p>}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            }
-                            return null;
+                                    )}
+
+                                    {validCosts.length > 0 && validFees.length <= 1 && (
+                                        <div className="bg-secondary/30 p-4 rounded-xl border border-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                            <div>
+                                                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Investimento Inicial</p>
+                                                <p className="text-sm text-foreground mt-0.5">
+                                                    {validFees.length === 1 && `Taxa: R$ ${parseMoneyValue(validFees[0].value).toLocaleString('pt-BR')} • `}
+                                                    Custos: {validCosts.map(c => `${c.label || 'Item'}: R$ ${parseMoneyValue(c.value).toLocaleString('pt-BR')}`).join(' + ')}
+                                                </p>
+                                            </div>
+                                            <div className="bg-primary/10 px-3.5 py-1.5 rounded-xl border border-primary/20 text-center sm:text-right">
+                                                <span className="text-[10px] uppercase font-bold text-primary block">Custo Total Inicial</span>
+                                                <span className="text-lg font-bold text-primary">
+                                                    R$ {((validFees.length === 1 ? parseMoneyValue(validFees[0].value) : 0) + totalCosts).toLocaleString('pt-BR')}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
                         })()}
 
                         <div className="flex flex-col sm:flex-row gap-3">
@@ -453,7 +607,7 @@ const AdminDashboard = ({ token, setToken }) => {
   // Multi-Plan Builder state
   const [selectedPlans, setSelectedPlans] = useState([]);
   const [showBuilder, setShowBuilder] = useState(false);
-  const [builderData, setBuilderData] = useState({ clientName: '', fees: {} });
+  const [builderData, setBuilderData] = useState({ clientName: '', fees: {}, costs: {} });
   const [editingProposalId, setEditingProposalId] = useState(null);
   
   const [proposals, setProposals] = useState([]);
@@ -535,7 +689,8 @@ const AdminDashboard = ({ token, setToken }) => {
     
     const plansPayload = selectedPlans.map(p => ({
         ...p,
-        fees: builderData.fees[p.id] || [{ label: 'Taxa de Abertura', value: '' }]
+        fees: builderData.fees?.[p.id] || [{ label: 'Taxa de Abertura', value: '' }],
+        costs: builderData.costs?.[p.id] || []
     }));
 
     const proposalPayload = {
@@ -559,7 +714,7 @@ const AdminDashboard = ({ token, setToken }) => {
         setActiveTab('Propostas');
         setShowBuilder(false);
         setSelectedPlans([]);
-        setBuilderData({ clientName: '', fees: {} });
+        setBuilderData({ clientName: '', fees: {}, costs: {} });
         
         if (!editingProposalId) {
             const newlyCreated = {
@@ -579,14 +734,19 @@ const AdminDashboard = ({ token, setToken }) => {
 
   const handleEditProposal = (p) => {
       setEditingProposalId(p.id);
+      const pPlans = p.data.plans ? p.data.plans : (p.data.plan ? [p.data.plan] : []);
       setBuilderData({
           clientName: p.data.clientName,
-          fees: p.data.plans ? p.data.plans.reduce((acc, plan) => {
-              acc[plan.id] = plan.fees || [{ label: 'Taxa de Abertura', value: '' }];
+          fees: pPlans.reduce((acc, plan) => {
+              acc[plan.id] = plan.fees || (plan.openingFee ? [{ label: 'Taxa de Abertura', value: plan.openingFee }] : [{ label: 'Taxa de Abertura', value: '' }]);
               return acc;
-          }, {}) : {}
+          }, {}),
+          costs: pPlans.reduce((acc, plan) => {
+              acc[plan.id] = plan.costs || [];
+              return acc;
+          }, {})
       });
-      setSelectedPlans(p.data.plans ? p.data.plans : (p.data.plan ? [p.data.plan] : []));
+      setSelectedPlans(pPlans);
       setShowBuilder(true);
   };
 
@@ -657,11 +817,15 @@ const AdminDashboard = ({ token, setToken }) => {
       {/* Modal Construtor de Propostas Multi-planos */}
       {showBuilder && (
           <div className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in fade-in">
-              <div className="bg-card border border-border w-full max-w-2xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+              <div className="bg-card border border-border w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[92vh]">
                   <div className="p-6 border-b border-border flex justify-between items-center bg-secondary/30">
-                      <h3 className="text-xl font-bold text-primary font-serif">{editingProposalId ? 'Editar Proposta' : 'Configurar Nova Proposta'}</h3>
-                      <button onClick={() => {setShowBuilder(false); setEditingProposalId(null);}} className="text-muted-foreground hover:text-foreground"><X size={20}/></button>
+                      <div>
+                          <h3 className="text-xl font-bold text-primary font-serif">{editingProposalId ? 'Editar Proposta' : 'Configurar Nova Proposta'}</h3>
+                          <p className="text-xs text-muted-foreground mt-0.5">Defina cliente, taxas de abertura e custos iniciais para cada plano</p>
+                      </div>
+                      <button onClick={() => {setShowBuilder(false); setEditingProposalId(null);}} className="text-muted-foreground hover:text-foreground p-1"><X size={20}/></button>
                   </div>
+                  
                   <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
                       <div>
                           <label className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-2 block">Nome do Cliente / Empresa</label>
@@ -669,60 +833,221 @@ const AdminDashboard = ({ token, setToken }) => {
                               value={builderData.clientName} 
                               onChange={e => setBuilderData({...builderData, clientName: e.target.value})} 
                               placeholder="Ex: Restaurante Porto Rico LTDA" 
-                              className="w-full bg-background border border-border rounded-xl px-4 py-4 text-base focus:border-primary outline-none text-foreground" 
+                              className="w-full bg-background border border-border rounded-xl px-4 py-3.5 text-base focus:border-primary outline-none text-foreground" 
                           />
                       </div>
+
                       <div>
-                          <label className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3 block">Planos Selecionados e Taxas de Abertura</label>
-                          <div className="flex flex-col gap-3">
+                          <label className="text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground mb-3 block">Planos Selecionados: Taxas e Custos Iniciais</label>
+                          <div className="flex flex-col gap-5">
                               {selectedPlans.map((p, idx) => {
-                                  const planFees = builderData.fees[p.id] || [{ label: 'Taxa de Abertura', value: '' }];
+                                  const planFees = builderData.fees?.[p.id] || [{ label: 'Taxa de Abertura', value: '' }];
+                                  const planCosts = builderData.costs?.[p.id] || [];
+
+                                  const validFees = planFees.filter(f => f.value && String(f.value).trim() !== '');
+                                  const validCosts = planCosts.filter(c => c.value && String(c.value).trim() !== '');
+                                  const totalCostsNum = validCosts.reduce((s, c) => s + parseMoneyValue(c.value), 0);
+
                                   return (
-                                      <div key={p.id} className="flex flex-col gap-3 bg-background p-4 rounded-xl border border-border">
-                                          <div className="flex items-center justify-between">
+                                      <div key={p.id} className="flex flex-col bg-background rounded-2xl border-2 border-border/80 overflow-hidden shadow-sm">
+                                          {/* Plan Header */}
+                                          <div className="p-4 bg-secondary/40 border-b border-border flex items-center justify-between">
                                               <div>
-                                                  <p className="font-bold text-sm text-foreground">Opção {idx + 1}: {p.name}</p>
-                                                  <p className="text-xs text-muted-foreground">R$ {p.price.toLocaleString('pt-BR')}/mês</p>
+                                                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Opção {idx + 1}</span>
+                                                  <h4 className="font-bold text-base text-foreground leading-tight">{p.name}</h4>
                                               </div>
-                                              <button onClick={() => {
-                                                  const currentFees = builderData.fees[p.id] || [{ label: 'Taxa de Abertura', value: '' }];
-                                                  setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: [...currentFees, { label: '', value: '' }]}});
-                                              }} className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/30 px-3 py-1.5 rounded-lg hover:bg-primary/10 flex items-center gap-1">
-                                                  <Plus size={12}/> Nova Taxa
-                                              </button>
+                                              <div className="text-right">
+                                                  <span className="text-[10px] uppercase font-bold text-muted-foreground block">Honorários</span>
+                                                  <span className="font-bold text-sm text-primary">R$ {p.price.toLocaleString('pt-BR')}/mês</span>
+                                              </div>
                                           </div>
-                                          
-                                          <div className="flex flex-col gap-2 mt-2 border-t border-border/50 pt-3">
-                                              {planFees.map((fee, feeIdx) => (
-                                                  <div key={feeIdx} className="flex items-center gap-2">
-                                                      <input 
-                                                          value={fee.label} 
-                                                          onChange={e => {
-                                                              const newFees = [...planFees];
-                                                              newFees[feeIdx].label = e.target.value;
-                                                              setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
-                                                          }}
-                                                          placeholder="Nome da taxa (ex: Abertura individual)" 
-                                                          className="flex-1 bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none text-foreground" 
-                                                      />
-                                                      <input 
-                                                          value={fee.value} 
-                                                          onChange={e => {
-                                                              const newFees = [...planFees];
-                                                              newFees[feeIdx].value = e.target.value;
-                                                              setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
-                                                          }}
-                                                          placeholder="Valor" 
-                                                          className="w-32 bg-secondary border border-border rounded-lg px-3 py-2 text-sm focus:border-primary outline-none text-foreground" 
-                                                      />
-                                                      <button onClick={() => {
-                                                          const newFees = planFees.filter((_, i) => i !== feeIdx);
-                                                          setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
-                                                      }} className="text-accent hover:text-accent/80 p-2">
-                                                          <Trash2 size={16} />
+
+                                          {/* Side-by-side Columns: Taxas (OU) | Custos (E) */}
+                                          <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                              {/* COLUNA 1: TAXAS */}
+                                              <div className="flex flex-col bg-secondary/15 p-3.5 rounded-xl border border-border">
+                                                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-border/50">
+                                                      <div>
+                                                          <h5 className="font-bold text-xs text-foreground uppercase tracking-wider">Taxas de Abertura</h5>
+                                                          <span className="text-[10px] text-muted-foreground">Alternativas entre si (separador "OU")</span>
+                                                      </div>
+                                                      <button 
+                                                          type="button"
+                                                          onClick={() => {
+                                                              const currentFees = builderData.fees?.[p.id] || [{ label: 'Taxa de Abertura', value: '' }];
+                                                              setBuilderData({
+                                                                  ...builderData, 
+                                                                  fees: { ...builderData.fees, [p.id]: [...currentFees, { label: '', value: '' }] }
+                                                              });
+                                                          }} 
+                                                          className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/30 px-2.5 py-1 rounded-lg hover:bg-primary/10 flex items-center gap-1 transition-colors"
+                                                      >
+                                                          <Plus size={12}/> Nova Taxa
                                                       </button>
                                                   </div>
-                                              ))}
+
+                                                  <div className="flex flex-col gap-2">
+                                                      {planFees.map((fee, feeIdx) => (
+                                                          <React.Fragment key={feeIdx}>
+                                                              <div className="flex items-center gap-2">
+                                                                  <input 
+                                                                      value={fee.label} 
+                                                                      onChange={e => {
+                                                                          const newFees = [...planFees];
+                                                                          newFees[feeIdx] = { ...newFees[feeIdx], label: e.target.value };
+                                                                          setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
+                                                                      }} 
+                                                                      placeholder="Descrição (ex: Individual)" 
+                                                                      className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-xs focus:border-primary outline-none text-foreground" 
+                                                                  />
+                                                                  <input 
+                                                                      value={fee.value} 
+                                                                      onChange={e => {
+                                                                          const newFees = [...planFees];
+                                                                          newFees[feeIdx] = { ...newFees[feeIdx], value: e.target.value };
+                                                                          setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
+                                                                      }} 
+                                                                      placeholder="Valor (R$)" 
+                                                                      className="w-28 bg-background border border-border rounded-lg px-3 py-2 text-xs focus:border-primary outline-none text-foreground font-semibold" 
+                                                                  />
+                                                                  <button 
+                                                                      type="button"
+                                                                      onClick={() => {
+                                                                          const newFees = planFees.filter((_, i) => i !== feeIdx);
+                                                                          setBuilderData({...builderData, fees: {...builderData.fees, [p.id]: newFees}});
+                                                                      }} 
+                                                                      className="text-muted-foreground hover:text-accent p-1.5 transition-colors"
+                                                                      title="Remover taxa"
+                                                                  >
+                                                                      <Trash2 size={14} />
+                                                                  </button>
+                                                              </div>
+                                                              {feeIdx < planFees.length - 1 && (
+                                                                  <div className="flex items-center justify-center my-0.5">
+                                                                      <div className="h-px bg-border/60 flex-1"></div>
+                                                                      <span className="text-[9px] font-bold text-muted-foreground px-2 bg-secondary/30 rounded">OU</span>
+                                                                      <div className="h-px bg-border/60 flex-1"></div>
+                                                                  </div>
+                                                              )}
+                                                          </React.Fragment>
+                                                      ))}
+                                                  </div>
+                                              </div>
+
+                                              {/* COLUNA 2: CUSTOS */}
+                                              <div className="flex flex-col bg-secondary/15 p-3.5 rounded-xl border border-border">
+                                                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-border/50">
+                                                      <div>
+                                                          <h5 className="font-bold text-xs text-foreground uppercase tracking-wider">Custos Iniciais</h5>
+                                                          <span className="text-[10px] text-muted-foreground">Cumulativos (somados com "E")</span>
+                                                      </div>
+                                                      <button 
+                                                          type="button"
+                                                          onClick={() => {
+                                                              const currentCosts = builderData.costs?.[p.id] || [];
+                                                              setBuilderData({
+                                                                  ...builderData, 
+                                                                  costs: { ...builderData.costs, [p.id]: [...currentCosts, { label: '', value: '' }] }
+                                                              });
+                                                          }} 
+                                                          className="text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/30 px-2.5 py-1 rounded-lg hover:bg-primary/10 flex items-center gap-1 transition-colors"
+                                                      >
+                                                          <Plus size={12}/> Novo Custo
+                                                      </button>
+                                                  </div>
+
+                                                  <div className="flex flex-col gap-2">
+                                                      {planCosts.length === 0 ? (
+                                                          <div className="py-4 text-center border border-dashed border-border rounded-lg">
+                                                              <p className="text-xs text-muted-foreground mb-2">Nenhum custo adicional lançado.</p>
+                                                              <button 
+                                                                  type="button"
+                                                                  onClick={() => {
+                                                                      setBuilderData({
+                                                                          ...builderData, 
+                                                                          costs: { ...builderData.costs, [p.id]: [{ label: '', value: '' }] }
+                                                                      });
+                                                                  }}
+                                                                  className="text-[11px] font-semibold text-primary hover:underline inline-flex items-center gap-1"
+                                                              >
+                                                                  <Plus size={12}/> Adicionar primeiro custo
+                                                              </button>
+                                                          </div>
+                                                      ) : (
+                                                          planCosts.map((cost, costIdx) => (
+                                                              <React.Fragment key={costIdx}>
+                                                                  <div className="flex items-center gap-2">
+                                                                      <input 
+                                                                          value={cost.label} 
+                                                                          onChange={e => {
+                                                                              const newCosts = [...planCosts];
+                                                                              newCosts[costIdx] = { ...newCosts[costIdx], label: e.target.value };
+                                                                              setBuilderData({...builderData, costs: {...builderData.costs, [p.id]: newCosts}});
+                                                                          }} 
+                                                                          placeholder="Descrição (ex: Certificado Digital)" 
+                                                                          className="flex-1 bg-background border border-border rounded-lg px-3 py-2 text-xs focus:border-primary outline-none text-foreground" 
+                                                                      />
+                                                                      <input 
+                                                                          value={cost.value} 
+                                                                          onChange={e => {
+                                                                              const newCosts = [...planCosts];
+                                                                              newCosts[costIdx] = { ...newCosts[costIdx], value: e.target.value };
+                                                                              setBuilderData({...builderData, costs: {...builderData.costs, [p.id]: newCosts}});
+                                                                          }} 
+                                                                          placeholder="Valor (R$)" 
+                                                                          className="w-28 bg-background border border-border rounded-lg px-3 py-2 text-xs focus:border-primary outline-none text-foreground font-semibold" 
+                                                                      />
+                                                                      <button 
+                                                                          type="button"
+                                                                          onClick={() => {
+                                                                              const newCosts = planCosts.filter((_, i) => i !== costIdx);
+                                                                              setBuilderData({...builderData, costs: {...builderData.costs, [p.id]: newCosts}});
+                                                                          }} 
+                                                                          className="text-muted-foreground hover:text-accent p-1.5 transition-colors"
+                                                                          title="Remover custo"
+                                                                      >
+                                                                          <Trash2 size={14} />
+                                                                      </button>
+                                                                  </div>
+                                                                  {costIdx < planCosts.length - 1 && (
+                                                                      <div className="flex items-center justify-center my-0.5">
+                                                                          <div className="h-px bg-border/60 flex-1"></div>
+                                                                          <span className="text-[9px] font-bold text-primary px-2 bg-primary/10 rounded">E</span>
+                                                                          <div className="h-px bg-border/60 flex-1"></div>
+                                                                      </div>
+                                                                  )}
+                                                              </React.Fragment>
+                                                          ))
+                                                      )}
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          {/* SOMATÓRIO E CUSTO TOTAL INICIAL PREVIEW */}
+                                          <div className="px-4 py-3 bg-secondary/50 border-t border-border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
+                                              <div className="flex items-center gap-2 flex-wrap text-muted-foreground">
+                                                  <span className="font-semibold text-foreground">Resumo Inicial:</span>
+                                                  {validCosts.length > 0 && (
+                                                      <span>Soma dos Custos: <strong>R$ {totalCostsNum.toLocaleString('pt-BR')}</strong></span>
+                                                  )}
+                                                  {validFees.length > 0 && validCosts.length > 0 && <span>•</span>}
+                                                  {validFees.length > 0 && (
+                                                      <span>
+                                                          Taxa(s): {validFees.map(f => `${f.label || 'Taxa'}: R$ ${parseMoneyValue(f.value).toLocaleString('pt-BR')}`).join(' ou ')}
+                                                      </span>
+                                                  )}
+                                              </div>
+
+                                              <div className="bg-card px-3 py-1.5 rounded-lg border border-primary/30 flex items-center gap-2 shadow-xs">
+                                                  <span className="text-[10px] uppercase font-bold text-primary tracking-wider">Custo Total Inicial:</span>
+                                                  <span className="font-bold text-sm text-foreground">
+                                                      {validFees.length > 1 ? (
+                                                          validFees.map(f => `R$ ${(parseMoneyValue(f.value) + totalCostsNum).toLocaleString('pt-BR')}`).join(' OU ')
+                                                      ) : (
+                                                          `R$ ${((validFees.length === 1 ? parseMoneyValue(validFees[0].value) : 0) + totalCostsNum).toLocaleString('pt-BR')}`
+                                                      )}
+                                                  </span>
+                                              </div>
                                           </div>
                                       </div>
                                   );
@@ -730,6 +1055,7 @@ const AdminDashboard = ({ token, setToken }) => {
                           </div>
                       </div>
                   </div>
+
                   <div className="p-6 border-t border-border bg-secondary/30 flex justify-end gap-3">
                       <button onClick={() => {setShowBuilder(false); setEditingProposalId(null);}} className="px-6 py-2.5 bg-background border border-border text-foreground font-semibold rounded-xl hover:bg-secondary transition-colors">Cancelar</button>
                       <button onClick={handleContract} className="px-6 py-2.5 bg-primary text-primary-foreground font-bold rounded-xl hover:opacity-90 flex items-center gap-2 transition-opacity">
@@ -863,6 +1189,11 @@ const AdminDashboard = ({ token, setToken }) => {
                               {p.acceptanceData && p.acceptanceData.selectedFeeLabel && (
                                   <span className="block mt-0.5 text-accent font-bold">
                                       Tipo de Abertura: {p.acceptanceData.selectedFeeLabel}
+                                  </span>
+                              )}
+                              {p.acceptanceData && p.acceptanceData.totalInitialCost && (
+                                  <span className="block mt-0.5 text-primary font-bold">
+                                      Custo Total Inicial: R$ {p.acceptanceData.totalInitialCost.toLocaleString('pt-BR')}
                                   </span>
                               )}
                           </p>
